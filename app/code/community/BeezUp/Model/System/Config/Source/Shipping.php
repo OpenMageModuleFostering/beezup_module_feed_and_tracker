@@ -7,9 +7,9 @@ class BeezUp_Model_System_Config_Source_Shipping
     {
 
         return $this->getActiveShippingMethods();
-    
+
     }
-	
+
 	public function getActiveShippingMethods()
     {
         $methods = array(array('value'=>'','label'=>Mage::helper('beezup')->__('--Please Select--')));
@@ -26,11 +26,11 @@ class BeezUp_Model_System_Config_Source_Shipping
                     $options[]=array('value'=>$code,'label'=>$method);
 
                }
-			
+
                $carrierTitle = Mage::getStoreConfig('carriers/'.$carrierCode.'/title');
 
            }
-		   
+
             $methods[]=array('value'=>$options,'label'=>$carrierTitle);
         }
         return $methods;

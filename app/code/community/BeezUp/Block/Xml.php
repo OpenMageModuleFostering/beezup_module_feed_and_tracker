@@ -872,6 +872,8 @@
 		set_time_limit(0);
 		$helper = Mage::helper('beezup');
 		$this->setCacheLifetime(null);
+		$storeId = Mage::app()->getStore()->getStoreId();
+		$websiteId = Mage::app()->getStore()->getWebsiteId();
 		//dbg
 		/*
 		$this->getAssociatedProducto(true);
@@ -880,40 +882,40 @@
 		if (!$this->createFolder()) // Si on rencontre des problèmes de création de dossier on retourne rien
 		return;
 		if ($this->getConfigurable()){ // Appel de l'url http://site.com/beezup/catalog/configurable
-		if ($this->needRefreshing('configurable')){
-		if (file_exists('beezup/tmp/configurable'))
-		$this->deleteFeed('configurable');
+		if ($this->needRefreshing('configurable_'.$storeId.'_'.$websiteId)){
+		if (file_exists('beezup/tmp/configurable_'.$storeId.'_'.$websiteId))
+		$this->deleteFeed('configurable_'.$storeId.'_'.$websiteId);
 		$xmlData = $this->getXmlConfigurable($paginate);
 		$this->addText($xmlData);
 		if ($helper->getConfig('beezup/flux/cachedelay') != 0)
-		$this->createFile('configurable', $xmlData);
+		$this->createFile('configurable_'.$storeId.'_'.$websiteId, $xmlData);
 		}
 		else
-		echo file_get_contents('beezup/tmp/configurable');
+		echo file_get_contents('beezup/tmp/configurable_'.$storeId.'_'.$websiteId);
 		}
 		else if ($this->getChildXML()){ // Appel de l'url http://site.com/beezup/catalog/child
-		if ($this->needRefreshing('child')){
-		if (file_exists('beezup/tmp/child'))
-		$this->deleteFeed('child');
+		if ($this->needRefreshing('child_'.$storeId.'_'.$websiteId)){
+		if (file_exists('beezup/tmp/child_'.$storeId.'_'.$websiteId))
+		$this->deleteFeed('child_'.$storeId.'_'.$websiteId);
 		$xmlData =  $this->getXmlChild($paginate);
 		$this->addText($xmlData);
 		if ($helper->getConfig('beezup/flux/cachedelay') != 0)
-		$this->createFile('child', $xmlData);
+		$this->createFile('child_'.$storeId.'_'.$websiteId, $xmlData);
 		}
 		else
-		echo file_get_contents('beezup/tmp/child');
+		echo file_get_contents('beezup/tmp/child_'.$storeId.'_'.$websiteId);
 		}
 		else { // Appel de l'url http://site.com/beezup/catalog/xml
-		if ($this->needRefreshing('xml')){
-		if (file_exists('beezup/tmp/xml'))
-		$this->deleteFeed('xml');
+		if ($this->needRefreshing('xml_'.$storeId.'_'.$websiteId)){
+		if (file_exists('beezup/tmp/xml_'.$storeId.'_'.$websiteId))
+		$this->deleteFeed('xml_'.$storeId.'_'.$websiteId);
 		$xmlData = $this->getXml($paginate);
 		$this->addText($xmlData);
 		if ($helper->getConfig('beezup/flux/cachedelay') != 0)
-		$this->createFile('xml', $xmlData);
+		$this->createFile('xml_'.$storeId.'_'.$websiteId, $xmlData);
 		}
 		else
-		echo file_get_contents('beezup/tmp/xml');
+		echo file_get_contents('beezup/tmp/xml_'.$storeId.'_'.$websiteId);
 		}
 		return parent::_toHtml();
 		}
