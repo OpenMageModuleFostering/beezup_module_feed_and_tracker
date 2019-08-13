@@ -576,6 +576,7 @@ class Beezup_Block_Order extends Mage_core_block_text {
 
 
 			$addressData = array(
+				'billing_company' => ($data['order_company']) ? $data['order_company'] : "",
 				'billing_firstname' => ($data['order_customer']) ? $data['order_customer'] : "empty",
 				'billing_lastname' => ($data['order_lastname']) ? $data['order_lastname'] : "empty",
 				'billing_street' => ($data['order_address']) ? $data['order_address'] : "empty",
@@ -591,6 +592,7 @@ class Beezup_Block_Order extends Mage_core_block_text {
 				'shipping_postcode' =>  ($data['shipping_postalCode']) ? $data['shipping_postalCode'] : "empty",
 				'shipping_telephone' => ($data['shipping_phone']) ? $data['shipping_phone'] : "empty",
 				'shipping_country_id' => ($data['shipping_country_iso']) ? $data['shipping_country_iso'] : "empty",
+				'shipping_company' => ($data['shipping_company']) ? $data['shipping_company'] : "",
 			'shipping_region_id' => ($data['shipping_region']) ? substr($data['shipping_region'], 0, 2) : "EM"  // id from directory_country_region table
 			);
 
@@ -961,6 +963,7 @@ class Beezup_Block_Order extends Mage_core_block_text {
 						'postcode' => ($data['order_postalCode']) ? $data['order_postalCode'] : "empty",
 						'telephone' => ($data['order_customer_phone']) ? $data['order_customer_phone'] : "empty",
 						'country_id' => ($data['order_country_iso']) ? $data['order_country_iso'] : "empty",
+						'company' => ($data['order_company']) ? $data['order_company'] : "",
 					'region_id' => ($data['order_region ']) ?  substr($data['order_region '], 0,2) : "EM"// id from directory_country_region table
 					);
 
@@ -972,6 +975,7 @@ class Beezup_Block_Order extends Mage_core_block_text {
 						'postcode' =>  ($data['shipping_postalCode']) ? $data['shipping_postalCode'] : "empty",
 						'telephone' => ($data['shipping_phone']) ? $data['shipping_phone'] : "empty",
 						'country_id' => ($data['shipping_country_iso']) ? $data['shipping_country_iso'] : "empty",
+						'shipping_company' => ($data['shipping_company']) ? $data['shipping_company'] : "",
 					'region_id' => ($data['shipping_region']) ? substr($data['shipping_region'], 0, 2) : "EM"  // id from directory_country_region table
 					);
 
