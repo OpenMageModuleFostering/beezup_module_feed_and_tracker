@@ -22,6 +22,10 @@ class BeezupMageOrders {
 	}
 	
 	
+	public function escape($string) {
+	return Mage::getSingleton('core/resource')->getConnection('default_write')->quote($string);
+	}
+	
 	public function updateBeezupInfo() {
 		if(!empty($this->data)) {
 			$this->getConnection();
@@ -127,15 +131,15 @@ private function updateInfoTab($result, $table) {
 		
 		if($this->data['shipping_lastname'] != $result['lastname']) {
 		$blndentro = true;		
-			$query .= " lastname = '{$this->data['shipping_lastname'] }' ,";
+			$query .= " lastname = {$this->escape($this->data['shipping_lastname']) } ,";
 		}
 		if($this->data['shipping_street'] != $result['street']) {
 		$blndentro = true;		
-			$query .= " street = '{$this->data['shipping_street'] }' ,";
+			$query .= " street = {$this->escape($this->data['shipping_street']) } ,";
 		}
 		if($this->data['shipping_city'] != $result['city']) {
 		$blndentro = true;		
-			$query .= " city = '{$this->data['shipping_city'] }' ,";
+			$query .= " city = {$this->escape($this->data['shipping_city']) } ,";
 		}
 		if($this->data['shipping_telephone'] != $result['telephone']) {
 		$blndentro = true;		
@@ -143,7 +147,7 @@ private function updateInfoTab($result, $table) {
 		}
 		if($this->data['shipping_firstname'] != $result['firstname']) {
 		$blndentro = true;	
-	$query .= " firstname = '{$this->data['shipping_firstname'] }' ,";		
+	$query .= " firstname = {$this->escape($this->data['shipping_firstname']) } ,";		
 		}
 		
 		if($blndentro) {
@@ -170,15 +174,15 @@ private function updateInfoTab($result, $table) {
 		
 		if($this->data['billing_lastname'] != $result['lastname']) {
 		$blndentro = true;		
-			$query .= " lastname = '{$this->data['billing_lastname'] }' ,";
+			$query .= " lastname = {$this->escape($this->data['billing_lastname'] )} ,";
 		}
 		if($this->data['billing_street'] != $result['street']) {
 		$blndentro = true;		
-			$query .= " street = '{$this->data['billing_street'] }' ,";
+			$query .= " street = {$this->escape($this->data['billing_street'] )} ,";
 		}
 		if($this->data['billing_city'] != $result['city']) {
 		$blndentro = true;		
-			$query .= " city = '{$this->data['billing_city'] }' ,";
+			$query .= " city = {$this->escape($this->data['billing_city']) }',";
 		}
 		if($this->data['billing_telephone'] != $result['telephone']) {
 		$blndentro = true;		
@@ -186,7 +190,7 @@ private function updateInfoTab($result, $table) {
 		}
 		if($this->data['billing_firstname'] != $result['firstname']) {
 		$blndentro = true;	
-	$query .= " firstname = '{$this->data['billing_firstname'] }' ,";		
+	$query .= " firstname = {$this->escape($this->data['billing_firstname']) } ,";		
 		}
 		
 		if($blndentro) {
