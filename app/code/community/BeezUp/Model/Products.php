@@ -9,9 +9,9 @@
 			* @param bool $configurable
 			* @return Mage_Catalog_Model_Resource_Product_Collection?
 		*/
-		public function getProducts($configurable = false)
-		{
-			$products = Mage::getResourceModel('catalog/product_collection')
+  public function getProducts($configurable = false)
+    {
+        $products = Mage::getResourceModel('catalog/product_collection')
             ->addAttributeToFilter('status', 1)
             ->addAttributeToFilter('visibility', array('in' => array(Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG, Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)))
             ->addAttributeToFilter('price', array('neq' => 0))
@@ -19,30 +19,27 @@
             ->addAttributeToSelect('weight')
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('special_price')
-			->addAttributeToSelect('special_from_date')
+	     ->addAttributeToSelect('special_from_date')
             ->addAttributeToSelect('special_to_date')
             ->addAttributeToSelect('small_image')
             ->addAttributeToSelect('image')
             ->addAttributeToSelect(Mage::getStoreConfig('beezup/flux/description'))
             ->addStoreFilter();
-			/*	$products = Mage::getModel('catalog/product')
-                ->getCollection();
-				
-			*/
-			if($configurable) $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE);
-			
-			if(Mage::getStoreConfig('beezup/flux/stock')){
-				$products=	$products->joinField('inventory_in_stock', 'cataloginventory_stock_item', 'is_in_stock', 'product_id=entity_id','is_in_stock>=0', 'left')
-				->addAttributeToFilter('inventory_in_stock', array('neq' => 0));
-			}
-			
-			$attributes = explode(',', Mage::getStoreConfig('beezup/flux/attributes'));
-			foreach ($attributes as $a) $products->addAttributeToSelect($a);
-			
-			if (Mage::getStoreConfig('beezup/flux/debug_flux')) $products->setPageSize(10);
-			
-			return $products;
+
+        if($configurable) $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE);
+		
+		if(Mage::getStoreConfig('beezup/flux/stock')){
+			$products=	$products->joinField('inventory_in_stock', 'cataloginventory_stock_item', 'is_in_stock', 'product_id=entity_id','is_in_stock>=0', 'left')
+						->addAttributeToFilter('inventory_in_stock', array('neq' => 0));
 		}
+		
+        $attributes = explode(',', Mage::getStoreConfig('beezup/flux/attributes'));
+        foreach ($attributes as $a) $products->addAttributeToSelect($a);
+
+        if (Mage::getStoreConfig('beezup/flux/debug_flux')) $products->setPageSize(10);
+
+        return $products;
+    }
 		
 		public function getGroupedProduct()
 		{
@@ -92,8 +89,8 @@
 			*
 			* @return Mage_Catalog_Model_Resource_Product_Collection?
 		*/
-		public function getConfigurableProducts($config = true) {
-			$products = Mage::getResourceModel('catalog/product_type_configurable_product_collection')
+  public function getConfigurableProducts($config = true) {
+        $products = Mage::getResourceModel('catalog/product_type_configurable_product_collection')
             ->addAttributeToFilter('status', 1)
             ->addAttributeToFilter('price', array('neq' => 0))
             ->addAttributeToSelect('name')
@@ -107,27 +104,28 @@
             ->addAttributeToSelect(Mage::getStoreConfig('beezup/flux/description'))
             ->addStoreFilter();
 			
-			if(Mage::getStoreConfig('beezup/flux/stock')){
-				$products=	$products->joinField('inventory_in_stock', 'cataloginventory_stock_item', 'is_in_stock', 'product_id=entity_id','is_in_stock>=0', 'left')
-				->addAttributeToFilter('inventory_in_stock', array('neq' => 0));
-			}
-			
-			$attributes = explode(',', Mage::getStoreConfig('beezup/flux/attributes'));
-			foreach ($attributes as $a) $products->addAttributeToSelect($a);
-			
-			$productsArray = $products;
-			
-			//si on est dans le cas où on veut les pères et les fils
-			if($config){
-				$productsArray = array();
-				
-				foreach($products as $p) {
-					$productsArray[$p->getParentId()][] = $p;
-				}
-			}
-			
-			return $productsArray;
+		if(Mage::getStoreConfig('beezup/flux/stock')){
+			$products=	$products->joinField('inventory_in_stock', 'cataloginventory_stock_item', 'is_in_stock', 'product_id=entity_id','is_in_stock>=0', 'left')
+						->addAttributeToFilter('inventory_in_stock', array('neq' => 0));
 		}
+
+        $attributes = explode(',', Mage::getStoreConfig('beezup/flux/attributes'));
+        foreach ($attributes as $a) $products->addAttributeToSelect($a);
+
+        $productsArray = $products;
+		
+		//si on est dans le cas où on veut les pères et les fils
+		if($config){
+			$productsArray = array();
+
+			foreach($products as $p) {
+				$productsArray[$p->getParentId()][] = $p;
+			}
+		}
+
+        return $productsArray;
+    }
+
 		
 		/*
 			* Collect options applicable to the configurable product for Varation Theme
@@ -303,35 +301,10 @@
 			* @param array $categories
 			* @return array
 		*/
-		public function getProductsCategories($product,$categories, $logic = false)
+		public function getProductsCategories($product,$categories)
 		{
-			if($logic) {
-				$result = array();
-				$_categories = $product->getCategoryIds();
-				$parent_id = 0;
-				$parent_id = 0;
-				$i = 0;
-				sort($_categories);
-				
-				if(count($_categories)) {
-					$_count = 0;
-					foreach($_categories as $c) {
-						if(isset($categories[$c])) {
-							if( $parent_id ==  $categories[$c]['parent'] || $i <= 1) {
-								$result[] = $categories[$c]['name'];
-								
-								
-								$parent_id = $categories[$c]['id'];
-								
-							}
-							$i++;
-							//   if(count(explode('||',$categories[$c])) > $_count) $result = explode('||',$categories[$c]);
-							$_count = count($result);
-						}
-					}
-				}
-				return $result;
-				} else {
+		
+		
 				$_categories = $product->getCategoryIds();
 				
 				sort($_categories);
@@ -345,9 +318,47 @@
 						}
 					}
 				}
-			}
+			
 			return $result;
 		}
+		
+		
+		  /*
+			  * Retrieve product categories
+    *
+    * @param Mage_Catalog_Model_Product $product
+    * @param array $categories
+    * @return array
+    */
+    public function getProductsCategories2($product,$categories)
+    {
+		 $result = array();
+        $_categories = $product->getCategoryIds();
+		$parent_id = 0;
+		$parent_id = 0;
+		$i = 0;
+        sort($_categories);
+       
+        if(count($_categories)) {
+            $_count = 0;
+            foreach($_categories as $c) {
+                if(isset($categories[$c])) {
+					if( $parent_id ==  $categories[$c]['parent'] || $i <= 1) {
+					$result[] = $categories[$c]['name'];
+				
+				
+						$parent_id = $categories[$c]['id'];
+					
+					}
+					$i++;
+                 //   if(count(explode('||',$categories[$c])) > $_count) $result = explode('||',$categories[$c]);
+                    $_count = count($result);
+                }
+            }
+        }
+        return $result;
+    }
+		
 		
 		/*
 			* Retrieve current store
