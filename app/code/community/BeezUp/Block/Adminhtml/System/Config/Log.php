@@ -6,7 +6,7 @@ class Beezup_Block_Adminhtml_System_Config_Log extends Mage_Adminhtml_Block_Syst
 	    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
     {
 
-			$logDir =  Mage::getModuleDir('', 'BeezUp')."/log/";
+			$logDir =  Mage::getBaseDir('base').'/beezup/';
 	//	$log1 = file_get_contents();
 	$ret = array();
         if (file_exists($logDir."/log.txt")) {

@@ -104,12 +104,12 @@ $this->getConnection()->addColumn(
 	
 );
 
+/*
 $dir = Mage::getModuleDir("etc", "BeezUp");
 $dir = str_replace("etc", "log", $dir);
-
 $io = new Varien_Io_File();
 $io->checkAndCreateFolder($dir);
-
+*/
 $oLastSynchronizationDate = new DateTime ( 'now', new DateTimeZone ( 'UTC' ));
 $helper = Mage::getModel('core/config');
 $helper->saveConfig('beezup/marketplace/syncro_time',$oLastSynchronizationDate->getTimestamp());

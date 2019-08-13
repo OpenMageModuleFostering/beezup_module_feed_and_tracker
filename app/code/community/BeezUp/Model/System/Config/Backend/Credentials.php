@@ -1,7 +1,7 @@
 <?php 
 
-require_once dirname ( __FILE__ ) . "/../../../../lib/bootstrap.php";
-require_once dirname ( __FILE__ ) . "/../../../../lib/BeezupRepository.php";
+require_once Mage::getModuleDir('', 'BeezUp') . DS . 'lib' . DS ."bootstrap.php";
+require_once  Mage::getModuleDir('', 'BeezUp') . DS . 'lib' . DS ."BeezupRepository.php";
 
 
 class Beezup_Model_System_Config_Backend_Credentials extends Mage_Core_Model_Config_Data

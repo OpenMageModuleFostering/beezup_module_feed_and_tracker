@@ -1,8 +1,8 @@
 <?php 
-	require_once dirname ( __FILE__ ) . "/../lib/KLogger.php";
-	require_once dirname ( __FILE__ ) . "/../lib/bootstrap.php";
-	require_once dirname ( __FILE__ ) . "/../lib/BeezupRepository.php";
-	require_once dirname ( __FILE__ ) . "/../lib/BeezupMageOrders.php";
+	require_once Mage::getModuleDir('', 'BeezUp') . DS . 'lib' . DS ."KLogger.php";
+	require_once Mage::getModuleDir('', 'BeezUp') . DS . 'lib' . DS ."bootstrap.php";
+	require_once Mage::getModuleDir('', 'BeezUp') . DS . 'lib' . DS ."BeezupRepository.php";
+	require_once Mage::getModuleDir('', 'BeezUp') . DS . 'lib' . DS ."BeezupMageOrders.php";
 	
 	class Beezup_Block_Omstatus extends Mage_core_block_text {
 		protected $repository = null;

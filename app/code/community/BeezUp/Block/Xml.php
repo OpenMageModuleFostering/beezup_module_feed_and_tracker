@@ -6,8 +6,9 @@
 		/**
 			Xml permet de récupérer tous les produits simples 
 		**/
-		public function getXml()
+		public function getXml($paginate = false)
 		{
+
 			$base_url = Mage::getBaseUrl();
 			/* Load Model and Helper */
 			$beezup = Mage::getModel('beezup/products');
@@ -48,7 +49,7 @@
 			$xml = "\xEF\xBB\xBF";
 			$xml .= '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL . '<catalog>' . PHP_EOL;
 			
-			$products = $beezup->getProducts();
+			$products = $beezup->getProducts(false, $paginate);
 			if($many_images == 1) {
 				$backendModel = $products->getResource()->getAttribute('media_gallery')->getBackend();
 			}
@@ -161,7 +162,7 @@
 		/**
 			Configurable permet de récupérer tous les produits (père, enfant et simple)
 		**/
-		public function getXmlConfigurable()
+		public function getXmlConfigurable($paginate = false)
 		{	
 			$base_url = Mage::getBaseUrl();
 			/* Load Model and Helper */
@@ -202,8 +203,8 @@
 			$xml .= '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL . '<catalog>' . PHP_EOL;
 			
 			//récupére tous les produits
-			$products = $beezup->getProducts();
-			$childs = $beezup->getConfigurableProducts(true);
+			$products = $beezup->getProducts(false, $paginate);
+			$childs = $beezup->getConfigurableProducts(true, $paginate);
 			$backendModel = $products->getResource()->getAttribute('media_gallery')->getBackend();
 			$products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE);
 			
@@ -408,7 +409,7 @@
 				}
 			}
 			
-			$product_simple = $beezup->getProductsSimple();
+			$product_simple = $beezup->getProductsSimple($paginate);
 			$backendModelSimple = $product_simple->getResource()->getAttribute('media_gallery')->getBackend();
 			foreach ($product_simple as $p) {
 				
@@ -503,7 +504,7 @@
 		/**
 			Children permet de récupérer tous les produits enfants 
 		**/
-		public function getXmlChild()
+		public function getXmlChild($paginate = false)
 		{
 			/* Load Model and Helper */
 			$beezup = Mage::getModel('beezup/products');
@@ -542,7 +543,7 @@
 			$xml = "\xEF\xBB\xBF";
 			$xml .= '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL . '<catalog>' . PHP_EOL;
 			
-			$childs = $beezup->getConfigurableProducts(false);
+			$childs = $beezup->getConfigurableProducts(false, $paginate);
 			
 			foreach ($childs as $c) {
 				
@@ -797,7 +798,7 @@
 					
 					protected function createFile($type, $xmlData)
 					{
-					$fp = fopen('beezup/tmp/'.$type, 'w');
+					$fp = fopen(Mage::getBaseDir('base').'/beezup/tmp/'.$type, 'w');
 					if ($fp == false)
 					{
 					echo 'Fail to create file';
@@ -808,7 +809,7 @@
 					
 					protected function deleteFeed($type)
 					{
-					unlink('beezup/tmp/'.$type);
+					unlink(Mage::getBaseDir('base').'/beezup/tmp/'.$type);
 					}
 					
 					protected function needRefreshing($type)
@@ -817,7 +818,7 @@
 					
 					$delay = $helper->getConfig('beezup/flux/cachedelay') * 60;
 					$nowtime = time();
-					$fileTime = filemtime('beezup/tmp/'.$type);
+					$fileTime = filemtime(Mage::getBaseDir('base').'/beezup/tmp/'.$type);
 					if (($nowtime - $fileTime) >= $delay)
 					return (true);
 					else
@@ -858,14 +859,14 @@
 					/*
 					$this->getAssociatedProducto(true);
 					return;*/
-					
+					$paginate = $this->getPagination();
 					if (!$this->createFolder()) // Si on rencontre des problèmes de création de dossier on retourne rien
 					return;
 					if ($this->getConfigurable()){ // Appel de l'url http://site.com/beezup/catalog/configurable
 					if ($this->needRefreshing('configurable')){
 					if (file_exists('beezup/tmp/configurable'))
 					$this->deleteFeed('configurable');
-					$xmlData = $this->getXmlConfigurable();
+					$xmlData = $this->getXmlConfigurable($paginate);
 					$this->addText($xmlData);
 					if ($helper->getConfig('beezup/flux/cachedelay') != 0)
 					$this->createFile('configurable', $xmlData);
@@ -877,7 +878,7 @@
 					if ($this->needRefreshing('child')){
 					if (file_exists('beezup/tmp/child'))
 					$this->deleteFeed('child');
-					$xmlData =  $this->getXmlChild();
+					$xmlData =  $this->getXmlChild($paginate);
 					$this->addText($xmlData);
 					if ($helper->getConfig('beezup/flux/cachedelay') != 0)
 					$this->createFile('child', $xmlData);
@@ -889,7 +890,7 @@
 					if ($this->needRefreshing('xml')){
 					if (file_exists('beezup/tmp/xml'))
 					$this->deleteFeed('xml');
-					$xmlData = $this->getXml();
+					$xmlData = $this->getXml($paginate);
 					$this->addText($xmlData);
 					if ($helper->getConfig('beezup/flux/cachedelay') != 0)
 					$this->createFile('xml', $xmlData);
