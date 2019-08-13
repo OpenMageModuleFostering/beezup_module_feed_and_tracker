@@ -11,7 +11,7 @@ class BeezUp_Model_Products extends Mage_Core_Model_Abstract
      */
     public function getProducts($configurable = false)
     {
-        $products = Mage::getResourceModel('catalog/product_collection')
+    $products = Mage::getResourceModel('catalog/product_collection')
             ->addAttributeToFilter('status', 1)
             ->addAttributeToFilter('visibility', array('in' => array(Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG, Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)))
             ->addAttributeToFilter('price', array('neq' => 0))
@@ -19,13 +19,16 @@ class BeezUp_Model_Products extends Mage_Core_Model_Abstract
             ->addAttributeToSelect('weight')
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('special_price')
-	     ->addAttributeToSelect('special_from_date')
+			->addAttributeToSelect('special_from_date')
             ->addAttributeToSelect('special_to_date')
             ->addAttributeToSelect('small_image')
             ->addAttributeToSelect('image')
             ->addAttributeToSelect(Mage::getStoreConfig('beezup/flux/description'))
             ->addStoreFilter();
-
+	/*	$products = Mage::getModel('catalog/product')
+                ->getCollection();
+			
+*/
         if($configurable) $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE);
 		
 		if(Mage::getStoreConfig('beezup/flux/stock')){
@@ -62,7 +65,7 @@ class BeezUp_Model_Products extends Mage_Core_Model_Abstract
             ->addAttributeToSelect('weight')
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('special_price')
-	     ->addAttributeToSelect('special_from_date')
+			->addAttributeToSelect('special_from_date')
             ->addAttributeToSelect('special_to_date')
             ->addAttributeToSelect('small_image')
             ->addAttributeToSelect('image')
@@ -233,45 +236,24 @@ class BeezUp_Model_Products extends Mage_Core_Model_Abstract
     * @param array $cats
     * @return string
     */
-    public function getCategoriesAsArray($_categories, $tl_name = '')
+    public function getCategoriesAsArray($categories, $parent = '', &$cats = array())
     {
+        foreach ($categories as $c) {
+            $cats[$c['entity_id']] = $parent . $c['name'];
 
-$parent = 0;
-	$i = 0;
-	foreach($_categories as $_category){
-		  
-		if($i==0 ) {
-			$par_cat = Mage::getModel('catalog/category')->load($_category->getId())->getParentCategory();
-		$cats[$par_cat->getId()] =	array("name" => $tl_name.$par_cat->getName(), "id" => $par_cat->getId(), "parent" => $par_cat->getParentId());
-		}
-		
-		
-		//$_category = Mage::getModel('catalog/category')->load($_category->getId());
-		$cats[$_category->getId()] = array("name" => $tl_name.$_category->getName(), "id" => $_category->getId(), "parent" => $_category->getParentId() ); //Toplevel auslesen
-		$i++;
-		$_category = Mage::getModel('catalog/category')->load($_category->getId());
-		$subcats = $this->getChildCategories($_category);
-
-			foreach($subcats as $c) {
-	
-				$cats[$c['id']] = array("name" => $tl_name.$c['name'], "id" => $c['id'] , "parent" => $c['parent']);
-			} 
-	}
-      	return $cats;
-    }
-
-public $_catIds = array();
-public function getChildCategories($categoryObject){
-    $categories = $categoryObject->getChildrenCategories();
-    foreach ($categories as $catgory){
-        if($catgory->hasChildren()){
-            $this->getChildCategories($catgory);
+            if (!Mage::helper('catalog/category_flat')->isEnabled()) {
+                if ($childs = $c->getChildren()) {
+                    $this->getCategoriesAsArray($childs, $parent . $c['name'] . '||', $cats);
+                }
+            } else {
+                if (isset($c['children_nodes'])) {
+                    $this->getCategoriesAsArray($c['children_nodes'], $parent . $c['name'] . '||', $cats);
+                }
+            }
         }
-            $this->_catIds[] = array("id" => $catgory->getId(), "name" => $catgory->getName(), "parent" => $catgory->getParentId());
+        return $cats;
     }
-    return $this->_catIds;
-}	
-	
+
     /*
     * Retrieve product categories
     *
@@ -281,26 +263,15 @@ public function getChildCategories($categoryObject){
     */
     public function getProductsCategories($product,$categories)
     {
-		 $result = array();
         $_categories = $product->getCategoryIds();
-		$parent_id = 0;
-		$parent_id = 0;
-		$i = 0;
+		
         sort($_categories);
-       
+        $result = array();
         if(count($_categories)) {
             $_count = 0;
             foreach($_categories as $c) {
                 if(isset($categories[$c])) {
-					if( $parent_id ==  $categories[$c]['parent'] || $i <= 1) {
-					$result[] = $categories[$c]['name'];
-				
-				
-						$parent_id = $categories[$c]['id'];
-					
-					}
-					$i++;
-                 //   if(count(explode('||',$categories[$c])) > $_count) $result = explode('||',$categories[$c]);
+                    if(count(explode('||',$categories[$c])) > $_count) $result = explode('||',$categories[$c]);
                     $_count = count($result);
                 }
             }

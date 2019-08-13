@@ -42,13 +42,19 @@ class Beezup_Block_Order extends Mage_core_block_text {
 		$this->log = new KLogger ( $logDir."log.txt" , KLogger::DEBUG );
 		$this->log2 = new KLogger ( $logDir."log2.txt" , KLogger::DEBUG );
 		$this->debugLog("Initializing OM Importation");
-	$shiiping_disabled = Mage::getStoreConfig('carriers/flatrate/active');
+	$shiiping_disabled = Mage::getStoreConfig('');
 	 if($shiiping_disabled == 0) {
-		$this->enableFlatRate(true);
+		 Mage::getConfig()
+			->saveConfig('carriers/flatrate/active', 1)
+			->cleanCache();
+			Mage::app()->reinitStores();
 	 }
 		$this->getOrderList();
 		if($shiiping_disabled == 0) {
-$this->enableFlatRate(false);
+		 Mage::getConfig()
+			->saveConfig('carriers/flatrate/active', 0)
+			->cleanCache();
+			Mage::app()->reinitStores();
 	 }			
 		$this->repository->updateLastSynchronizationDate( $sync_end_date);
 		$this->orderid = "";
@@ -653,18 +659,7 @@ return false;
 		}
 
 	
-	private function enableFlatRate($enable = true) {	
-			$resource = Mage::getSingleton('core/resource');
-		    $writeConnection = $resource->getConnection('core_write');
-			$table = $resource->getTableName('core/config_data');
-		if($enable) {
-			$query = "update {$table} set value = '1' where path = 'carriers/flatrate/active'";
-		} else {
-			$query = "update {$table} set value = '1' where path = 'carriers/flatrate/active'";
-		}
-		    $writeConnection->query($query);	
-	}
-	
+
  public function addOrder($data, $oLink, $stop = false) {
 
 		

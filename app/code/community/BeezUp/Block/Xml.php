@@ -7,8 +7,6 @@ class BeezUp_Block_Xml extends Mage_Core_Block_Text
 	**/
     public function getXml()
     {
-		
-
 		$base_url = Mage::getBaseUrl();
         /* Load Model and Helper */
         $beezup = Mage::getModel('beezup/products');
@@ -19,12 +17,7 @@ class BeezUp_Block_Xml extends Mage_Core_Block_Text
         $_ht = $helper->getConfig('beezup/flux/ht');
         $_description = $helper->getConfig('beezup/flux/description');
         $_tablerates = $helper->getConfig('beezup/flux/tablerates_weight_destination') ? $beezup->getTablerates() : 0;
-		$categories = Mage::getModel('catalog/category')->getCollection()
-																							  ->addAttributeToSelect('*')//or you can just add some attributes
-																								->addAttributeToFilter('level', 2)
-																								->addAttributeToFilter('is_active', 1);
-        $_categories = $beezup->getCategoriesAsArray( $categories 	);
-//  $_categories 		= $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
+        $_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
         $_attributes = $helper->getConfig('beezup/flux/attributes') ? explode(',', $helper->getConfig('beezup/flux/attributes')) : array();
         $_vat = ($_ht && is_numeric($helper->getConfig('beezup/flux/vat'))) ? (preg_replace('(\,+)', '.', $helper->getConfig('beezup/flux/vat')) / 100) + 1 : 1;
         $_catalog_rules = $helper->getConfig('beezup/flux/catalog_rules');
@@ -45,7 +38,7 @@ $backendModel = $products->getResource()->getAttribute('media_gallery')->getBack
                 $stock = $beezup->getIsInStock($qty);
                 $shipping = $beezup->getDelivery($qty);
 				$price = $p->getPrice();
-				//$final_price = $p->getFinalPrice();
+				$final_price = $p->getFinalPrice();
 				if (($image = $p->getImage()) == "no_selection" || ($image = $p->getImage()) == "") // Si on ne trouve pas d'image avec getImage on récupère la smallImage
 					$image = $p->getSmallImage();
 
@@ -103,7 +96,7 @@ $backendModel = $products->getResource()->getAttribute('media_gallery')->getBack
                 $xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($p->getWeight(), $_tablerates)));
                 $xml .= $helper->tag($this->__('b_weight'), $helper->currency($p->getWeight()));
                 $xml .= $helper->tag($this->__('b_price'), $helper->currency($final_price*$_vat));
-          //      if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
+                if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
                 $i = 1;
                 foreach ($categories as $v) $xml .= $helper->tag($this->__('b_category_%s', $i++), $v, 1);
                 foreach ($_attributes as $a) {
@@ -137,13 +130,8 @@ $backendModel = $products->getResource()->getAttribute('media_gallery')->getBack
         $_ht 				= $helper->getConfig('beezup/flux/ht');
         $_description 		= $helper->getConfig('beezup/flux/description');
         $_tablerates 		= $helper->getConfig('beezup/flux/tablerates_weight_destination') ? $beezup->getTablerates() : 0;
-     		$categories = Mage::getModel('catalog/category')->getCollection()
-																							  ->addAttributeToSelect('*')//or you can just add some attributes
-																								->addAttributeToFilter('level', 2)
-																								->addAttributeToFilter('is_active', 1);
-        $_categories = $beezup->getCategoriesAsArray( $categories 	);
+        $_categories 		= $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
         $_attributes 		= $helper->getConfig('beezup/flux/attributes') ? explode(',', $helper->getConfig('beezup/flux/attributes')) : array();
-		$_attributes = array();
         $_vat 				= ($_ht && is_numeric($helper->getConfig('beezup/flux/vat'))) ? (preg_replace('(\,+)', '.', $helper->getConfig('beezup/flux/vat')) / 100) + 1 : 1;
         $_catalog_rules 	= $helper->getConfig('beezup/flux/catalog_rules');
 
@@ -165,10 +153,10 @@ $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE
 		   }
 		   
             $categories = $beezup->getProductsCategories($p, $_categories);
-            //$varationTheme = $beezup->getOptions($p);
+            $varationTheme = $beezup->getOptions($p);
 			//we get product object from catalog/product reason(beezup/products gets products from catalog/product_collection, didn't find the way to get image collection from there *will check)
 				
-         if (count($categories)) {
+            if (count($categories)) {
 				//si l'élément est un père, on va traiter ces enfants
 				if(isset($childs[$p->getId()])) {	
 					$childrens = $childs[$p->getId()];
@@ -178,7 +166,7 @@ $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE
 						$stock 			= $beezup->getIsInStock($qty);
 						$shipping 		= $beezup->getDelivery($qty);
 						$price 			= $c->getPrice();
-					//	$final_price 	= $c->getFinalPrice();
+						$final_price 	= $c->getFinalPrice();
 						$image 			= $this->fillImageUrl($p, $c);
 
 						//DBG
@@ -208,7 +196,7 @@ $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE
 
 						$xml .= $helper->tag($this->__('parent_or_child'), 'child', 1);
 						$xml .= $helper->tag($this->__('parent_id'), $p->getId());
-						//$xml .= $helper->tag($this->__('variation-theme'), $varationTheme, 1);
+						$xml .= $helper->tag($this->__('variation-theme'), $varationTheme, 1);
 
 						$xml .= $helper->tag($this->__('b_title'), trim($p->getName()), 1);
 						$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($_description))), 1);
@@ -246,8 +234,8 @@ $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE
 						$xml .= $helper->tag($this->__('b_delivery'), $shipping, 1);
 						$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($c->getWeight(), $_tablerates)));
 						$xml .= $helper->tag($this->__('b_weight'), $helper->currency($c->getWeight()));
-						$xml .= $helper->tag($this->__('b_price'), $helper->currency($price*$_vat));
-					//	if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
+						$xml .= $helper->tag($this->__('b_price'), $helper->currency($final_price*$_vat));
+						if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
 						$i = 1;
 						foreach ($categories as $v) $xml .= $helper->tag($this->__('b_category_%s', $i++), $v, 1);
 						foreach ($_attributes as $a) {
@@ -261,7 +249,7 @@ $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE
 					$stock = $beezup->getIsInStock($qty);
 					$shipping = $beezup->getDelivery($qty);
 					$price = $p->getPrice();
-					//$final_price = $p->getFinalPrice();
+					$final_price = $p->getFinalPrice();
 					if (($image = $p->getImage()) == "no_selection" || ($image = $p->getImage()) == "") // Si on ne trouve pas d'image avec getImage on récupère la smallImage
 						$image = $p->getSmallImage();
 					
@@ -273,7 +261,7 @@ $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE
 
 					$xml .= $helper->tag($this->__('parent_or_child'), 'parent', 1);
 					$xml .= $helper->tag($this->__('parent_id'), '');
-				//	$xml .= $helper->tag($this->__('variation-theme'), $varationTheme, 1);
+					$xml .= $helper->tag($this->__('variation-theme'), $varationTheme, 1);
 
 					$xml .= $helper->tag($this->__('b_title'), trim($p->getName()), 1);
 					$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($_description))), 1);
@@ -300,8 +288,8 @@ $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE
 					$xml .= $helper->tag($this->__('b_delivery'), $shipping, 1);
 					$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($p->getWeight(), $_tablerates)));
 					$xml .= $helper->tag($this->__('b_weight'), $helper->currency($p->getWeight()));
-					$xml .= $helper->tag($this->__('b_price'), $helper->currency($price*$_vat));
-				//	if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
+					$xml .= $helper->tag($this->__('b_price'), $helper->currency($final_price*$_vat));
+					if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
 					$i = 1;
 					foreach ($categories as $v) $xml .= $helper->tag($this->__('b_category_%s', $i++), $v, 1);
 					foreach ($_attributes as $a) {
@@ -312,12 +300,10 @@ $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE
 					$xml .= '</product>' . PHP_EOL;
 				}
             }
-       }
+        }
 		
 		$product_simple = $beezup->getProductsSimple();
-				if($many_images == 1) {
 		$backendModelSimple = $product_simple->getResource()->getAttribute('media_gallery')->getBackend();
-				}
 		foreach ($product_simple as $p) {
 		 
 			$prodAttributeSet = Mage::getModel('eav/entity_attribute_set')->load($p->getAttributeSetId())->getAttributeSetName(); 
@@ -329,7 +315,7 @@ $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE
 					$stock = $beezup->getIsInStock($qty);
 					$shipping = $beezup->getDelivery($qty);
 					$price = $p->getPrice();
-				//	$final_price = $p->getFinalPrice();
+					$final_price = $p->getFinalPrice();
 				if (($image = $p->getImage()) == "no_selection" || ($image = $p->getImage()) == "") // Si on ne trouve pas d'image avec getImage on récupère la smallImage
 					$image = $p->getSmallImage();
 					
@@ -368,8 +354,8 @@ $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE
 					$xml .= $helper->tag($this->__('b_delivery'), $shipping, 1);
 					$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($p->getWeight(), $_tablerates)));
 					$xml .= $helper->tag($this->__('b_weight'), $helper->currency($p->getWeight()));
-					$xml .= $helper->tag($this->__('b_price'), $helper->currency($price*$_vat));
-				//	if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
+					$xml .= $helper->tag($this->__('b_price'), $helper->currency($final_price*$_vat));
+					if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
 					$i = 1;
 					foreach ($categories as $v) $xml .= $helper->tag($this->__('b_category_%s', $i++), $v, 1);
 					foreach ($_attributes as $a) {
@@ -402,11 +388,7 @@ $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE
         $_ht = $helper->getConfig('beezup/flux/ht');
         $_description = $helper->getConfig('beezup/flux/description');
         $_tablerates = $helper->getConfig('beezup/flux/tablerates_weight_destination') ? $beezup->getTablerates() : 0;
-		$categories = Mage::getModel('catalog/category')->getCollection()
-																							  ->addAttributeToSelect('*')//or you can just add some attributes
-																								->addAttributeToFilter('level', 2)
-																								->addAttributeToFilter('is_active', 1);
-        $_categories = $beezup->getCategoriesAsArray( $categories 	);
+        $_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
         $_attributes = $helper->getConfig('beezup/flux/attributes') ? explode(',', $helper->getConfig('beezup/flux/attributes')) : array();
         $_vat = ($_ht && is_numeric($helper->getConfig('beezup/flux/vat'))) ? (preg_replace('(\,+)', '.', $helper->getConfig('beezup/flux/vat')) / 100) + 1 : 1;
         $_catalog_rules = $helper->getConfig('beezup/flux/catalog_rules');
