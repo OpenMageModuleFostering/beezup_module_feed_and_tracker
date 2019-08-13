@@ -65,27 +65,15 @@ class Beezup_Block_Order extends Mage_core_block_text {
 			$this->log = new KLogger ( $logDir."log.txt" , KLogger::DEBUG );
 			$this->log2 = new KLogger ( $logDir."log2.txt" , KLogger::DEBUG );
 			$this->debugLog("Initializing OM Importation");
-			$shiiping_disabled = Mage::getStoreConfig('carriers/flatrate/active');
-
 			$this->account_id = $account_id;
 			$this->marketplace_code = $marketplace_code;
 			$this->beezup_order_id = $beezup_order_id;
 			$orderResponse = $this->getBeezupOrder();
 			if($orderResponse) {
 
-				if($shiiping_disabled == 0) {
-					Mage::getConfig()
-					->saveConfig('carriers/flatrate/active', 1)
-					->cleanCache();
-					Mage::app()->reinitStores();
-				}
+
 				$this->createOrder($orderResponse);
-				if($shiiping_disabled == 0) {
-					Mage::getConfig()
-					->saveConfig('carriers/flatrate/active', 0)
-					->cleanCache();
-					Mage::app()->reinitStores();
-				}
+
 				$configModel->saveConfig('beezup/marketplace/sync_status',0);
 				if($this->mage_order_id) {
 					echo "<script>window.location='".Mage::helper('adminhtml')->getUrl("adminhtml/sales_order/view", array('order_id'=> $this->mage_order_id))."';</script>";
@@ -195,22 +183,10 @@ class Beezup_Block_Order extends Mage_core_block_text {
 				$this->log = new KLogger ( $logDir."log.txt" , KLogger::DEBUG );
 				$this->log2 = new KLogger ( $logDir."log2.txt" , KLogger::DEBUG );
 				$this->debugLog("Initializing OM Importation");
-				$shiiping_disabled = Mage::getStoreConfig('carriers/flatrate/active');
-				if($shiiping_disabled == 0) {
-					Mage::getConfig()
-					->saveConfig('carriers/flatrate/active', 1)
-					->cleanCache();
-					Mage::app()->reinitStores();
-				}
 
 
 				$this->getOrderList();
-				if($shiiping_disabled == 0) {
-					Mage::getConfig()
-					->saveConfig('carriers/flatrate/active', 0)
-					->cleanCache();
-					Mage::app()->reinitStores();
-				}
+
 				$this->repository->updateLastSynchronizationDate( $sync_end_date);
 				$this->orderid = "";
 				$this->debugLog("OM Importation finalized succesfully");
@@ -1019,7 +995,7 @@ class Beezup_Block_Order extends Mage_core_block_text {
 					$this->debugLog("Adding Order Shipping Cost: ". $data['order_shippingPrice']);
 
 					$shippingAddress->setCollectShippingRates(true)->collectShippingRates()
-					->setShippingMethod('flatrate_flatrate')
+					->setShippingMethod('beezup_beezup')
 					->setPaymentMethod($payment_method);
 
 					//$shippingAddress->addTotal(array("code" => "specialfee", "title" => "Special Fee", "value" => 20));
@@ -1114,6 +1090,23 @@ class Beezup_Block_Order extends Mage_core_block_text {
 						$order->save();
 					}
 
+
+					if($order->getShippingInclTax() != $data['order_shippingPrice']) {
+						$shipping_cost =  (float)$data['order_shippingPrice'];
+						$diff_shipping = ($shipping_cost - $order->getShippingInclTax());
+						//$order->setShippingAmount($order->getShippingAmount() + $diff_shipping);
+						//$order->setBaseShippingAmount($order->getShippingAmount());
+						$order->setShippingInclTax($shipping_cost);
+						$order->setBaseShippingInclTax($order->getShippingInclTax());
+						/*
+						$order->setSubtotalInclTax($order->getSubtotalInclTax() +  $diff_shipping);
+						$order->setBaseSubtotalInclTax($order->getSubtotalInclTax());
+						$order->setSubtotal($order->getSubtotal() +  $diff_shipping);
+						$order->setBaseSubtotal($order->getSubtotal());
+						*/
+						$order->save();
+					}
+
 					$products = Mage::getResourceModel('sales/order_item_collection')
 					->setOrderFilter($orderid);
 					foreach($products as $product) {
@@ -1131,6 +1124,9 @@ class Beezup_Block_Order extends Mage_core_block_text {
 					$order->setBaseGrandTotal($order->getTotalPaid());
 					$order->setBaseSubtotalInclTax($order->getSubtotalInclTax());
 					$order->save();
+
+
+
 
 					$this->setStatus($data['order_status'], $order);
 					$this->mage_order_id = $orderid;
