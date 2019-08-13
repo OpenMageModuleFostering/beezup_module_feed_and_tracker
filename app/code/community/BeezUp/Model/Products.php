@@ -83,7 +83,6 @@
             ->addAttributeToSelect(Mage::getStoreConfig('beezup/flux/description'))
             ->addAttributeToFilter('type_id', array('eq' => 'grouped'));
 			
-			
 			return $products;
 		}
 		
