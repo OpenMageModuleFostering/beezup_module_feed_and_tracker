@@ -1,7 +1,7 @@
 <config>
     <sections>
-		
-		
+
+
         <beezup translate="label" module="beezup">
             <label>BeezUP</label>
             <tab>catalog</tab>
@@ -13,7 +13,7 @@
                 <tracking translate="label">
                     <label>Tracking</label>
                     <frontend_type>text</frontend_type>
-                    <comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP V4.6.5) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
+                    <comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP v4.6.6) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
                     <sort_order>1</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -69,21 +69,21 @@
 					</fields>
 				</tracking>
 			</groups>
-			
-			
-			
-			
+
+
+
+
 			<groups>
 				<marketplace tanslate="label">
 					<label>Marketplace</label>
                     <frontend_type>text</frontend_type>
-                    <comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP V4.6.5) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
+                    <comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP v4.6.6) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
                     <sort_order>2</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
 					<fields>
-						
+
 						<api_credentials translate="comment">
 							<label>BeezUP API Credentials:</label>
 							<frontend_model>beezup/adminhtml_system_config_childgroup</frontend_model>
@@ -92,7 +92,7 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
 						</api_credentials>
-						
+
 						<connection_status translate="label">
                             <label>API BeezUP Connection status:</label>
 							<frontend_type>text</frontend_type>
@@ -102,8 +102,8 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-						</connection_status>	  
-						
+						</connection_status>
+
 						<sync_status translate="label">
                             <label>Sync Status:</label>
 							<frontend_type>text</frontend_type>
@@ -112,9 +112,9 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-						</sync_status>	  
-						
-						
+						</sync_status>
+
+
 						<syncro_time translate="label">
                             <label>Last synchronization time :</label>
 							<frontend_type>text</frontend_type>
@@ -124,34 +124,34 @@
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-						</syncro_time>	  
-						
-						
+						</syncro_time>
+
+
 						<cron_url translate="label">
                             <label>Manual orders retrieval link:</label>
 							<frontend_type>text</frontend_type>
 							<frontend_model>beezup/adminhtml_system_config_manualcron</frontend_model>
-							
+
                             <sort_order>4</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
 							<depends><connection_status>1</connection_status></depends>
-						</cron_url>	 
-						
+						</cron_url>
+
 						<cron_call translate="label">
                             <label>Cron Call</label>
 							<frontend_type>text</frontend_type>
 							<frontend_model>beezup/adminhtml_system_config_cron</frontend_model>
-							
+
                             <sort_order>5</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
 							<depends><connection_status>1</connection_status></depends>
-						</cron_call>	  
-						
-						
+						</cron_call>
+
+
 						<userid translate="label">
                             <label>User Id</label>
 							<frontend_type>text</frontend_type>
@@ -170,23 +170,23 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
 						</usertoken>
-						
+
 						<order_link translate="label">
                             <label>Synchronize a specific order</label>
 							<frontend_type>text</frontend_type>
 							<frontend_model>beezup/adminhtml_system_config_orderlink</frontend_model>
-							
+
                             <sort_order>8</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
 							<depends><connection_status>1</connection_status></depends>
-						</order_link>	  
-						
-						
-						
-						
-						
+						</order_link>
+
+
+
+
+
 						<status_mapping translate="comment">
 							<label>BeezUP API Status mapping :</label>
 							<frontend_model>beezup/adminhtml_system_config_childgroup</frontend_model>
@@ -195,8 +195,8 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
 						</status_mapping>
-						
-						
+
+
 						<status_new translate="comment">
                             <label>New (New) </label>
 							<frontend_type>select</frontend_type>
@@ -206,10 +206,10 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 							<comment></comment>
-							
+
 						</status_new>
-						
-						
+
+
 						<status_progress translate="comment">
 							<label>In progress (InProgress)</label>
 							<frontend_type>select</frontend_type>
@@ -219,10 +219,10 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 							<comment></comment>
-							
+
 						</status_progress>
-						
-						
+
+
 						<status_cancelled translate="comment">
 							<label>Cancelled (Canceled)</label>
 							<frontend_type>select</frontend_type>
@@ -232,9 +232,9 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 							<comment></comment>
-							
+
 						</status_cancelled>
-						
+
 						<status_shipped translate="comment">
 							<label>Shipped (Shipped)</label>
 							<frontend_type>select</frontend_type>
@@ -244,9 +244,9 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 							<comment></comment>
-							
+
 						</status_shipped>
-						
+
 						<status_closed translate="comment">
 							<label>Closed (Closed)</label>
 							<frontend_type>select</frontend_type>
@@ -256,10 +256,10 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 							<comment></comment>
-							
+
 						</status_closed>
-						
-						
+
+
 						<status_aborted translate="comment">
 							<label>(Aborted)</label>
 							<frontend_type>select</frontend_type>
@@ -269,12 +269,12 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 							<comment></comment>
-							
+
 						</status_aborted>
-						
-						
-						
-						
+
+
+
+
 						<stores_mapping translate="comment">
 							<label>BeezUP Stores mapping :</label>
 							<frontend_model>beezup/adminhtml_system_config_childgroup</frontend_model>
@@ -283,8 +283,8 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</stores_mapping>
-						
-						
+
+
 						<stores translate="comment">
 							<label>BeezUP Stores mapping :</label>
 							<frontend_model>beezup/adminhtml_system_config_stores</frontend_model>
@@ -294,10 +294,10 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 							<comment></comment>
-							
+
 						</stores>
-						
-						
+
+
 						<field_mapping translate="comment">
 							<label>BeezUP id field mapping :</label>
 							<frontend_model>beezup/adminhtml_system_config_childgroup</frontend_model>
@@ -306,7 +306,7 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</field_mapping>
-						
+
 						<attributes translate="comment">
 							<label>BeezUP id field mapping</label>
 							<frontend_model>beezup/adminhtml_system_config_attributes</frontend_model>
@@ -316,11 +316,11 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 							<comment></comment>
-							
+
 						</attributes>
-						
-						
-						
+
+
+
 						<main_config_block translate="comment">
 							<label>BeezUP Config:</label>
 							<frontend_model>beezup/adminhtml_system_config_childgroup</frontend_model>
@@ -329,9 +329,9 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</main_config_block>
-						
-						
-						
+
+
+
 						<payment_method translate="label">
 							<label>Default payment </label>
 							<frontend_type>select</frontend_type>
@@ -340,10 +340,10 @@
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
-						</payment_method>		
-						
-						
-						
+						</payment_method>
+
+
+
 						<available_products translate="label">
 							<label>Allow creating orders with non available products (Beta Version)</label>
 							<frontend_type>select</frontend_type>
@@ -352,8 +352,8 @@
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
-						</available_products>		
-						
+						</available_products>
+
 						<create_customers translate="label">
 							<label>Create customer for each order</label>
 							<frontend_type>select</frontend_type>
@@ -364,10 +364,10 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</create_customers>
-						
-						
-						
-						
+
+
+
+
 						<debug_mode translate="label">
 							<label>Debug Mode</label>
 							<frontend_type>select</frontend_type>
@@ -378,9 +378,9 @@
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
-						</debug_mode>	
-						
-						
+						</debug_mode>
+
+
 						<log_block translate="comment">
 							<label>Last execution Logs:</label>
 							<frontend_model>beezup/adminhtml_system_config_childgroup</frontend_model>
@@ -389,8 +389,8 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</log_block>
-						
-						
+
+
 					    <log translate="comment">
 							<label></label>
 							<frontend_model>beezup/adminhtml_system_config_log</frontend_model>
@@ -399,17 +399,17 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</log>
-						
+
 					</fields>
 				</marketplace>
 			</groups>
-			
-			
+
+
 			<groups>
 				<flux translate="label">
 					<label>Catalog Flow</label>
 					<frontend_type>text</frontend_type>
-					<comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP V4.6.5) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
+					<comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP v4.6.6) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
 					<sort_order>2</sort_order>
 					<show_in_default>1</show_in_default>
 					<show_in_website>1</show_in_website>
@@ -444,8 +444,8 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</stock>
-						
-					
+
+
 						<ht translate="label">
 							<label>Catalog Price</label>
 							<frontend_type>select</frontend_type>
@@ -483,8 +483,8 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</days_out>
-						
-						
+
+
 												<carrier_method translate="label">
 						<label>Shipping cost - Carrier</label>
 						<frontend_type>select</frontend_type>
@@ -495,8 +495,8 @@
 						<show_in_website>1</show_in_website>
 						<show_in_store>1</show_in_store>
 						</carrier_method>
-						
-						
+
+
 						<shipping_carrier translate="label">
 						<label>Default Shipping Carrier</label>
 						<frontend_type>select</frontend_type>
@@ -508,7 +508,7 @@
 						<show_in_store>1</show_in_store>
 						<depends><carrier_method>1</carrier_method></depends>
 						</shipping_carrier>
-						
+
 						<ship translate="label">
 						<label>Default Shipping Cost (with tax)</label>
 						<frontend_type>text</frontend_type>
@@ -518,8 +518,8 @@
 						<show_in_store>1</show_in_store>
 						<depends><carrier_method>0</carrier_method></depends>
 						</ship>
-						
-						
+
+
 						<default_country translate="label">
 						<label>Default Country</label>
 						<frontend_type>select</frontend_type>
@@ -531,7 +531,7 @@
 						<show_in_store>1</show_in_store>
 						<depends><carrier_method>1</carrier_method></depends>
 						</default_country>
-						
+
 						<default_shipping_cost translate="label">
 						<label>Shipping Cost (if no value found)</label>
 						<frontend_type>text</frontend_type>
@@ -542,10 +542,10 @@
 						<show_in_store>1</show_in_store>
 						<depends><carrier_method>1</carrier_method></depends>
 						</default_shipping_cost>
-						
-						
-						
-						
+
+
+
+
 						<description translate="label">
 							<label>Product description</label>
 							<frontend_type>multiselect</frontend_type>
@@ -564,8 +564,8 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</description_html>
-						
-						
+
+
 						<attributes translate="label">
 							<label>Specific Attributes</label>
 							<frontend_type>multiselect</frontend_type>
@@ -613,7 +613,7 @@
 						<show_in_website>1</show_in_website>
 						<show_in_store>1</show_in_store>
 						</images>
-						
+
 						<category_logic translate="label">
 						<label>Category Logic</label>
 						<frontend_type>select</frontend_type>
@@ -624,10 +624,10 @@
 						<show_in_website>1</show_in_website>
 						<show_in_store>1</show_in_store>
 						</category_logic>
-						
-						
 
-						
+
+
+
 						<visibility translate="label">
 						<label>Choice of exported products</label>
 						<frontend_type>select</frontend_type>
@@ -637,11 +637,11 @@
 						<show_in_website>1</show_in_website>
 						<show_in_store>1</show_in_store>
 						</visibility>
-						
-						
+
+
 						</fields>
 						</flux>
 						</groups>
 						</beezup>
 						</sections>
-						</config>																
+						</config>

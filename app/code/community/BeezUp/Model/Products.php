@@ -80,7 +80,11 @@
 		{
 			$products = Mage::getModel('catalog/product')
             ->getCollection()
-            ->addAttributeToSelect(Mage::getStoreConfig('beezup/flux/description'))
+            ->addAttributeToSelect("description")
+			->addAttributeToSelect("short_description")
+			->addAttributeToSelect("meta_description")
+			->addAttributeToSelect("meta_title")
+			->addAttributeToSelect("meta_keyword")
 			->addAttributeToSelect('small_image')
             ->addAttributeToSelect('image')
             ->addAttributeToFilter('type_id', array('eq' => 'grouped'));

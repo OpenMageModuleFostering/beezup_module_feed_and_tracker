@@ -2,12 +2,12 @@
 <config>
     <modules>
         <BeezUp>
-            <version>4.6.5</version>
+            <version>4.6.6</version>
         </BeezUp>
     </modules>
     <global>
-	
-	
+
+
 	<resources>
 			    <beezup_setup>
             <setup>
@@ -17,25 +17,25 @@
             <connection>
                 <use>core_setup</use>
             </connection>
-        </beezup_setup> 
-	
+        </beezup_setup>
+
 	</resources>
 
         <blocks>
-		
-		
+
+
 			<beezup>
                 <class>BeezUp_Block</class>
             </beezup>
-		
+
 			<adminhtml>
 				<rewrite>
-				
+
 					  <sales_order_totals>BeezUp_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
             <sales_order_invoice_totals>BeezUp_Block_Adminhtml_Sales_Order_Invoice_Totals</sales_order_invoice_totals>
 
 
-					
+
 				</rewrite>
 			</adminhtml>
 
@@ -51,7 +51,7 @@
               <carrier_flatrate>BeezUp_Model_Flatrate</carrier_flatrate>
          </rewrite>
        </shipping>
-		
+
             <beezup>
                 <class>BeezUp_Model</class>
             </beezup>
@@ -62,10 +62,10 @@
             </beezup>
         </helpers>
     </global>
-	
 
-	
-	
+
+
+
     <frontend>
         <routers>
             <beezup>
@@ -117,7 +117,7 @@
         <acl>
             <resources>
 
-			
+
                 <admin>
                     <children>
                         <system>
@@ -146,7 +146,7 @@
         </translate>
     </adminhtml>
     <default>
-		
+
         <beezup>
 
             <tracking>
@@ -175,16 +175,16 @@
                 <key></key>
                 <ip></ip>
 				<images></images>
-				
+
             </flux>
         </beezup>
     </default>
-	
-	
+
+
 		<admin>
         <routers>
             <adminhtml>
-			<use>admin</use>        
+			<use>admin</use>
                 <args>
                     <modules>
                         <BeezUp before="Mage_Adminhtml">BeezUp</BeezUp>
@@ -193,7 +193,7 @@
             </adminhtml>
         </routers>
     </admin>
-	
-	
-	
+
+
+
 </config>
