@@ -61,8 +61,18 @@ class BeezupOMOrderResult extends BeezupOMResult {
 	protected $sOrderMerchantECommerceSoftwareName = null;
 	protected $sOrderMerchantECommerceSoftwareVersion = null;
 	protected $sOrderStatusMarketPlaceStatus = null;
+	protected $sOrderMarketPlaceChannel = null;
 
 	protected $sDateFormat = 'Y-m-d\TH:i:s\Z';//DateTime::ISO8601;
+
+	public function getOrderMarketplaceChannel() {
+		return $this->sOrderMarketPlaceChannel;
+	}
+
+	public function setOrderMarketplaceChannel($channel) {
+		$this->sOrderMarketPlaceChannel = $channel;
+	}
+
 
 	/**
 	 * @return the $sOrderMerchantECommerceSoftwareVersion

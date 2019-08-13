@@ -17,7 +17,7 @@ class Beezup_Block_Order extends Mage_core_block_text {
 	private $marketplace_code;
 	private $beezup_order_id;
 	private $mage_order_id = false;
-
+	private $marketChannelFilters = array();
 
 	private function makeDir() {
 
@@ -45,6 +45,9 @@ class Beezup_Block_Order extends Mage_core_block_text {
 		}
 		$sync_end_date = new DateTime ( 'now', new DateTimeZone ( 'UTC' ));
 		$helper = Mage::helper('beezup');
+
+		$marketChannelFilters = $helper->getConfig('beezup/marketplace/market_channel_filters');
+		$this->marketChannelFilters = explode(",", $marketChannelFilters);
 		$sync_status = $helper->getConfig('beezup/marketplace/sync_status');
 		$debug_mode =  $helper->getConfig('beezup/marketplace/debug_mode');
 		$create_customer = $helper->getConfig("beezup/marketplace/create_customers");
@@ -162,6 +165,8 @@ class Beezup_Block_Order extends Mage_core_block_text {
 
 			$sync_end_date = new DateTime ( 'now', new DateTimeZone ( 'UTC' ));
 			$helper = Mage::helper('beezup');
+			$marketChannelFilters = $helper->getConfig('beezup/marketplace/market_channel_filters');
+			$this->marketChannelFilters = explode(",", $marketChannelFilters);
 			$sync_status = $helper->getConfig('beezup/marketplace/sync_status');
 			$debug_mode =  $helper->getConfig('beezup/marketplace/debug_mode');
 			$create_customer = $helper->getConfig("beezup/marketplace/create_customers");
@@ -271,6 +276,13 @@ class Beezup_Block_Order extends Mage_core_block_text {
 			$order_totalPrice = $final_order->getOrderTotalPrice();
 			$order_shippingPrice = $final_order->getOrderShippingPrice();
 
+			$marketChannel = $final_order->getOrderMarketplaceChannel();
+			$resetStock = false;
+			foreach($this->marketChannelFilters as $filter) {
+					if($filter == $marketChannel) {
+						$resetStock = true;
+					}
+			}
 			$name_parts = explode(" ", $order_customer);
 			$order_first_name = array_shift( $name_parts);
 			$order_last_name = implode(" ", $name_parts);
@@ -306,6 +318,7 @@ class Beezup_Block_Order extends Mage_core_block_text {
 				$mage_productIds = $this->prescanOrder($final_order);
 				if($mage_productIds) {
 					$order_data = array(
+						"resetStock" => $resetStock,
 						"etag" => $etag,
 						"account_id" => $account_id,
 						"order_status" => $order_status,
@@ -832,7 +845,7 @@ class Beezup_Block_Order extends Mage_core_block_text {
 					}
 
 
-
+					private $currentStock = null;
 
 					private function createCustomer($customer_email , $data) {
 						$password = $this->orderid;
@@ -902,27 +915,37 @@ class Beezup_Block_Order extends Mage_core_block_text {
 					//echo "Product ".$product->getId()."<br><br>";
 					//para no perder stock:
 					//Mage::getModel('cataloginventory/stock')->backItemQty($productId,$new_qty);
+							$stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
+								$this->currentStock[$prod['id']] = $stock->getQty();
+								if($addStock == 1 || $data['resetStock'] == true) {
 
 
-								if($addStock == 1) {
-									$stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
+									if (($stock->getQty() < $prod['qty'] && $product->getStockItem()->getMaxSaleQty() >= $prod['qty'] )  || $data['resetStock']
+									== true) {
+										$stockQty = $this->currentStock[$prod['id']]  + $prod['qty'];
+																			$this->debugLog("Product ".$product->getId()." Stock = ".(int)$this->currentStock[$prod['id']] .", Adding 1 to stock to generate Order");
+														//	Mage::getModel('cataloginventory/stock')->backItemQty($product->getId(),$prod['qty']);
+														//$this->_updateStocks(array("id_product" => $product->getId(), "qty" => $prod['qty']));
 
-									if ($stock->getQty() < $prod['qty'] && $product->getStockItem()->getMaxSaleQty() >= $prod['qty']) {
-										$this->debugLog("Product ".$product->getId()." Stock = 0, Updating to ".$prod['qty']." to generate Order");
-					//	Mage::getModel('cataloginventory/stock')->backItemQty($product->getId(),$prod['qty']);
-					//$this->_updateStocks(array("id_product" => $product->getId(), "qty" => $prod['qty']));
-										$product->setStockData(
-											array(
-												'is_in_stock' => 1,
-												'qty' => $prod['qty'],
-												'manage_stock' => 1,
-												'use_config_notify_stock_qty' => 1
-												)
-											);
+																			$product->setStockData(
+																				array(
+																					'is_in_stock' => 1,
+																					'qty' => $stockQty,
+																					'manage_stock' => 1,
+																					'use_config_notify_stock_qty' => 1
+																					)
+																				);
 										$product->save();
 										$product = Mage::getModel('catalog/product')->load($product->getId());
 
 									}
+								} elseif($this->currentStock[$prod['id']] == 0) {
+									$this->log->LogError($this->orderid. "| Order ".$data['market_place_order_id']." could not be imported, error: Product with id ".$product->getId()." has stock 0");
+									$this->restoreStock($data);
+									$blnCreate = false;
+									return;
+									break;
+
 								}
 					//fin para no perder stock
 
@@ -1166,12 +1189,15 @@ class Beezup_Block_Order extends Mage_core_block_text {
 
 			try {
 				foreach($data['products'] as $prod) {
+					if(!isset($this->currentStock[$prod['id']])) {
+						continue;
+					}
 					$product = Mage::getModel('catalog/product')->load($prod['id']);
 					$stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
 					if ($stock->getQty() != $prod['curr_stock'] ) {
 						$this->debugLog("Restoring Stock from Product ".$product->getId()." to: ".$prod['curr_stock'] ." due to Order Fail");
 						$stockItem = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
-						$stockItem->setData('is_in_stock', 0);
+						$stockItem->setData('is_in_stock', (int)$this->currentStock[$prod['id']]);
 						$stockItem->setData('qty', $prod['curr_stock']);
 						$stockItem->save();
 						$product->save();

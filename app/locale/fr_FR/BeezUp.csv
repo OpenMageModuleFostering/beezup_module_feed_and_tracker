@@ -164,3 +164,4 @@ Get Order,R&eacute;cup&eacute;rer commande
 If you enable this option customers will be created in Magento for each marketplace imported order,Si cette option est active les clients sont cr&eacute;&eacute;s dans Magento pour chaque commande place de march&eacute; import&eacute;e
 Shipping Cost (if no value found), Frais de port (si aucune valeur trouv&eacute;e)
 Choice of exported products,Choix des produits export&eacute;s
+Do not affect stock level for:,Ne pas affecter le niveau de stock pour:
