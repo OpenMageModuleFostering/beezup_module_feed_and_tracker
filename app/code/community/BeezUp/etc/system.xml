@@ -13,7 +13,7 @@
                 <tracking translate="label">
                     <label>Tracking</label>
                     <frontend_type>text</frontend_type>
-                    <comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP v4.6.3) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
+                    <comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP v4.6.4) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
                     <sort_order>1</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -77,7 +77,7 @@
 				<marketplace tanslate="label">
 					<label>Marketplace</label>
                     <frontend_type>text</frontend_type>
-                    <comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP v4.6.3) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
+                    <comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP v4.6.4) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
                     <sort_order>2</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
@@ -409,7 +409,7 @@
 				<flux translate="label">
 					<label>Catalog Flow</label>
 					<frontend_type>text</frontend_type>
-					<comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP v4.6.3) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
+					<comment><![CDATA[<div style="font-size:11px;padding:3px;margin-bottom:20px;background:#FFF9E9;border:1px solid #EEE2BE">Support BeezUP : <a href="mailto:help@beezup.com">help@beezup.com</a> (Magento BeezUP v4.6.4) - <a href="http://go.beezup.com" target="_blank">My BeezUP Account</a></div>]]></comment>
 					<sort_order>2</sort_order>
 					<show_in_default>1</show_in_default>
 					<show_in_website>1</show_in_website>
