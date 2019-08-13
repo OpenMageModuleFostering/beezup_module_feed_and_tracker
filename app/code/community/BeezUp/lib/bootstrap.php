@@ -55,6 +55,12 @@
 	require_once 'Stores/BeezupOMStoresResult.php';
 	require_once 'Stores/BeezupOMStore.php';
 
+	require_once 'Marketplaces/BeezupOMMarketplacesRequest.php';
+	require_once 'Marketplaces/BeezupOMMarketplacesResponse.php';
+	require_once 'Marketplaces/BeezupOMMarketplacesResult.php';
+	require_once 'Marketplaces/BeezupOMMarketplace.php';
+
+
 	require_once 'OrderChange/BeezupOMOrderChangeRequest.php';
 	require_once 'OrderChange/BeezupOMOrderChangeResult.php';
 	require_once 'OrderChange/BeezupOMOrderChangeResponse.php';
@@ -68,5 +74,3 @@
 	// require_once 'BeezupOMOrderServiceInterface.php';
 	require_once 'BeezupOMServiceClientProxy.php';
 	require_once 'BeezupOMOrderService.php';
-
-

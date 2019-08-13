@@ -2,7 +2,7 @@
 <config>
     <modules>
         <BeezUp>
-            <version>4.7.0</version>
+            <version>4.7.1</version>
         </BeezUp>
     </modules>
     <global>
@@ -61,6 +61,18 @@
                 <class>BeezUp_Helper</class>
             </beezup>
         </helpers>
+
+        <events>
+            <sales_order_shipment_save_after>
+                <observers>
+                    <beezup_autoship_order>
+       					<type>singleton</type>
+                        <class>beezup/observer</class>
+                        <method>autoShip</method>
+                    </beezup_autoship_order>
+                </observers>
+           </sales_order_shipment_save_after>
+        </events>
     </global>
 
 
@@ -95,6 +107,7 @@
                     </beezup_sales_tracking>
                 </observers>
             </checkout_onepage_controller_success_action>
+
         </events>
         <translate>
             <modules>

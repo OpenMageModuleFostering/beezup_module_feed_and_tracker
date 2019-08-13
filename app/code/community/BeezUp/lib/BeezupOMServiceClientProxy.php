@@ -201,6 +201,27 @@
 		}
 
 		/**
+			* Returns list of all stores associated with account
+			* @return BeezupOMMarketplacesResponse
+		*/
+		public function marketplaces(){
+			$oRequestData = $this->createRequestData()
+			->setHeaders(array('Content-type: application/json'))
+			->setUrl($this->getUrl(array('marketplaces')));
+			$oResponse = $this->doRequest($oRequestData, new BeezupOMMarketplacesResponse());
+			return $oResponse;
+		}
+
+		public function getMarketplace($market){
+
+			$oRequestData = $this->createRequestData()
+			->setHeaders(array('Content-type: application/json'))
+			->setUrl($this->getUrl(array("lov",$market)));
+			$oResponse = $this->doRequest($oRequestData, new BeezupOMLOVResponse());
+			return $oResponse;
+		}
+
+		/**
 		 * Sets merchant order id
 		 * @param BeezupOMSetOrderIdRequest $oRequest
 		 * @return BeezupOMSetOrderIdResponse
@@ -272,7 +293,7 @@
 		public function getOrderList(BeezupOMOrderListRequest $oRequest){
 			$aRequest = $oRequest->toArray();
 			$aRequest['beginPeriodUtcDate'] = $oRequest->getBeginPeriodUtcDate()->sub(new DateInterval("PT2H"))->format('Y-m-d\TH:i:s\Z');
-			
+
 			$oRequestData = $this->createRequestData()
 				->setUrl($this->getUrl(array(), $aRequest))
 				->setHeaders(array('Content-type: application/json'))
