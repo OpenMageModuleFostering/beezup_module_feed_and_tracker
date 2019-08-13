@@ -2,7 +2,7 @@
 <config>
     <modules>
         <BeezUp>
-            <version>4.6.0</version>
+            <version>4.6.1</version>
         </BeezUp>
     </modules>
     <global>
@@ -169,7 +169,7 @@
                 <days_out>6-8</days_out>
                 <description>description</description>
 				<cachedelay>2</cachedelay>
-				<visiblity>7</visiblity>
+				<visibility>7</visibility>
 				<category_logic>1</category_logic>
                 <ship></ship>
                 <key></key>
