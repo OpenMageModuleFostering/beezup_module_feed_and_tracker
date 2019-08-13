@@ -217,52 +217,66 @@ $return[] = array("action"=> $fields->rel, "parameters" => $retorno);
 
 
 		public function getMarketplacCarriersUp() {
-		  $marketplaceResponse = $this->getOrderService()->getClientProxy()->marketplaces();
-		  $result = $marketplaceResponse->getResult();
-		  $marketplaces = $result->getMarketplaces();
+			$marketplaceResponse = $this->getOrderService()->getClientProxy()->marketplaces();
+			$result = $marketplaceResponse->getResult();
+			$marketplaces = $result->getMarketplaces();
 
-		  $retorno = array();
+			$retorno = array();
 			$market_arr = array();
-		  foreach($marketplaces as $market) {
-		    $code = $market->getMarketplaceTechnicalCode();
-		    $business_code = $market->getMarketplaceBusinessCode();
-		    $tmpCode = $code."CarrierName";
-		    if($code == "Fnac" || $code == "PriceMinister" || $code == "Mirakl") {
 
-		    } else {
-		    continue;
-		    }
-		    if($code == "Mirakl") {
-		      $tmpCode = ucfirst(strtolower($business_code))."CarrierCode";
-		    }
+
+			foreach($marketplaces as $market) {
+				$code = $market->getMarketplaceTechnicalCode();
+				$business_code = $market->getMarketplaceBusinessCode();
+				$tmpCode = $code."CarrierName";
+				if($code == "Fnac" || $code == "PriceMinister" || $code == "Mirakl") {
+
+				} else {
+				continue;
+				}
+				if($code == "Mirakl") {
+					$tmpCode = ucfirst(strtolower($business_code))."CarrierCode";
+				}
 				if(in_array($code, $market_arr)) {
 					continue;
 				}
-				$market_arr[] = $code;
-		    $carrierResponse = $this->getOrderService()->getClientProxy()->getMarketplace($tmpCode);
-		    $carResponse = $carrierResponse->getResult();
-		      $tmpvars = array();
-		    foreach($carResponse->getValues() as $car) {
-		      $carCode = $car->getCodeIdentifier();
-		      $carName = $car->getTranslationText();
-		      if(!in_array($carCode, $tmpvars)) {
-		      $tmpvars[] = $carCode;
-		      $retorno[$code][] = array(
-		      'mc_idx' => md5(strtoupper($code . $carCode)),
-		      'marketplace_technical_code' =>$code,
-		      'marketplace_business_code' => $business_code,
-		      'code' => $carCode,
-		      'name' => $carName
+				$market_arr[] = $tmpCode;
+				$carrierResponse = $this->getOrderService()->getClientProxy()->getMarketplace($tmpCode);
 
-		      );
-		    }
+				$carResponse = $carrierResponse->getResult();
+					$tmpvars = array();
+				foreach($carResponse->getValues() as $car) {
+					$carCode = $car->getCodeIdentifier();
+					$carName = $car->getTranslationText();
+					if(!in_array($carName, $tmpvars)) {
+					$tmpvars[] = $carName;
+					$retorno[$code."-".$business_code][] = array(
+					'mc_idx' => md5(strtoupper($code . $carCode)),
+					'marketplace_technical_code' =>$code,
+					'marketplace_business_code' => $business_code,
+					'code' => $carCode,
+					'name' => $carName
+
+					);
+				}
 
 			}
-		  }
+			}
 
-		  return $retorno;
+			foreach($retorno as $key => $ret) {
+				$tmpArr = array();
+				foreach($ret as $k => $val) {
+					if(!in_array($val['code'], $tmpArr)) {
+					$tmpArr[] = $val['code'];
+				} else {
+					unset($retorno[$key][$k]);
+				}
+				}
+			}
+			return $retorno;
 
 		}
+
 
 
 

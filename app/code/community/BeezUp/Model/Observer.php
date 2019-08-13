@@ -32,7 +32,6 @@ class BeezUp_Model_Observer
 
     public function autoShip($observer) {
 
-
      $helper = Mage::helper('beezup');
      $blnAutoship = $helper->getConfig("beezup/marketplace/autoship_order");
     if($blnAutoship != 1) { return; }
@@ -51,6 +50,8 @@ class BeezUp_Model_Observer
             foreach($shipment->getAllTracks() as $tracking_number){
                 $shipping_data['tracking'] = $tracking_number->getNumber();
                 $shipping_data['carrier'] = $tracking_number->getTitle();
+
+
                 break;
             }
             break;
@@ -72,6 +73,7 @@ class BeezUp_Model_Observer
                     //it is a beezup order
                     $marketplace_business_code = $results[0]['beezup_marketplace_business_code'];
                     $marketplace_technical_code = $results[0]['beezup_marketplace'];
+
                     $shipping_data['marketplace_business_code'] = $marketplace_business_code;
                     $shipping_data['marketplace_technical_code'] = $marketplace_technical_code;
 
@@ -87,49 +89,52 @@ class BeezUp_Model_Observer
     }
 
 
-private function _MarketplaceTechnicalCodeCarriers($shipping_data ) {
-   $helper = Mage::helper('beezup');
+    private function _MarketplaceTechnicalCodeCarriers($shipping_data ) {
+    $helper = Mage::helper('beezup');
     $autoship_map = $helper->getConfig("beezup/marketplace/autoship_order_map");
     $autoship_map = unserialize($autoship_map);
     $code = $shipping_data['marketplace_technical_code'];
-    $business_code = $shipping_data['marketplace_business_code'];
+    $business_code = strtoupper($shipping_data['marketplace_business_code']);
     $id_carrier = $shipping_data['carrier'];
     $retorno = "";
+
     if($code =="PriceMinister") {
-    				//PriceMinisterCarrierName
-    				$retorno =  $this->_getOMStatusCarrier($autoship_map['PriceMinister'], $id_carrier);
-    				} elseif($code=="Fnac") {
-    				//FnacCarrierName
-    				$retorno =  $this->_getOMStatusCarrier( $autoship_map['Fnac'], $id_carrier);;
-    				} elseif($code == "Mirakl") {
-    				if($business_code == "DARTY") {
-    					//DartyCarrierCode
-    					$retorno =  $this->_getOMStatusCarrier( $autoship_map['DARTY'], $id_carrier);;
-    					} elseif($business_code == "BOULANGER") {
-    					//BoulangerCarrierCode
-    					$retorno =  $this->_getOMStatusCarrier( $autoship_map['BOULANGER'], $id_carrier);;
-    					} elseif($business_code == "LEQUIPE") {
-    					//LEquipeCarrierCode
-    					$retorno =   $this->_getOMStatusCarrier($autoship_map['LEQUIPE'], $id_carrier);;
-    					} elseif($business_code == "COMPTOIRSANTE") {
-    					//ComptoirSanteCarrierCode
-    					$retorno =   $this->_getOMStatusCarrier($autoship_map['COMPTOIRSANTE'], $id_carrier);;
-    					} elseif($business_code == "RUEDUCOMMERCE") {
-    					//RuedDuCommerceCarrierCode
-    					$retorno =   $this->_getOMStatusCarrier($autoship_map['RUEDUCOMMERCE'], $id_carrier);;
-    				}  elseif($business_code == "OUTIZ") {
-    						$retorno =   $this->_getOMStatusCarrier($autoship_map['OUTIZ'], $id_carrier);
-    				} else {
-    							$retorno =   $this->_getOMStatusCarrier($autoship_map[$business_code], $id_carrier);
-    				}
-    			}
-    			return $retorno;
+               //PriceMinisterCarrierName
+               $retorno =  $this->_getOMStatusCarrier($autoship_map['PriceMinister'], $id_carrier);
+               } elseif($code=="Fnac") {
+               //FnacCarrierName
+               $retorno =  $this->_getOMStatusCarrier( $autoship_map['Fnac'], $id_carrier);;
+
+               } elseif($code == "Mirakl") {
+               if($business_code == "DARTY") {
+                  //DartyCarrierCode
+                  $retorno =  $this->_getOMStatusCarrier( $autoship_map['DARTY'], $id_carrier);;
+                  } elseif($business_code == "BOULANGER") {
+                  //BoulangerCarrierCode
+                  $retorno =  $this->_getOMStatusCarrier( $autoship_map['BOULANGER'], $id_carrier);;
+                  } elseif($business_code == "LEQUIPE") {
+                  //LEquipeCarrierCode
+                  $retorno =   $this->_getOMStatusCarrier($autoship_map['LEQUIPE'], $id_carrier);;
+                  } elseif($business_code == "COMPTOIRSANTE") {
+                  //ComptoirSanteCarrierCode
+                  $retorno =   $this->_getOMStatusCarrier($autoship_map['COMPTOIRSANTE'], $id_carrier);;
+                  } elseif($business_code == "RUEDUCOMMERCE") {
+                  //RuedDuCommerceCarrierCode
+                  $retorno =   $this->_getOMStatusCarrier($autoship_map['RUEDUCOMMERCE'], $id_carrier);;
+               }  elseif($business_code == "OUTIZ") {
+                     $retorno =   $this->_getOMStatusCarrier($autoship_map['OUTIZ'], $id_carrier);
+               } else {
+                        $retorno =   $this->_getOMStatusCarrier($autoship_map[$business_code], $id_carrier);
+               }
+            }
+            return $retorno;
             }
 
             private function _getOMStatusCarrier($autoship_map, $carrier) {
                 foreach($autoship_map as $map) {
+
                     if($map['mage_carrierValue'] == $carrier) {
-                            return $map['beezup_carrierName'];
+                            return array("name" => $map['beezup_carrierName'], "code" => $map['beezup_carrierCode']);
                     }
                 }
                 return false;
@@ -145,29 +150,34 @@ private function _MarketplaceTechnicalCodeCarriers($shipping_data ) {
         foreach($orderOptions as $key => $action) {
             if(isset($action['action'])) {
                 if($action['action'] == "ShipOrder") {
-                	$post_data['action_id'] = $action['action'];
+                  $post_data['action_id'] = $action['action'];
                     $parameters = $action['parameters'];
 
                     foreach($parameters as $parameter) {
                         $post_data[$parameter->name] = "";
                         if($parameter->name == "Order_Shipping_FulfillmentDate") {
-                        	$post_data["Order_Shipping_FulfillmentDate"] = $today;
+                           $post_data["Order_Shipping_FulfillmentDate"] = $today;
                         }
                         elseif($parameter->name == "Order_Shipping_ShipperTrackingNumber") {
-                        	$post_data['Order_Shipping_ShipperTrackingNumber'] = $shipping_data['tracking'];
+                           $post_data['Order_Shipping_ShipperTrackingNumber'] = $shipping_data['tracking'];
                         }
                         elseif($parameter->name == "Order_Shipping_CarrierName" || $parameter->name == "Order_Shipping_CarrierCode") {
 
-                        	$carrier_name = $this->_MarketplaceTechnicalCodeCarriers($shipping_data);
-                        	if($carrier_name && $carrier_name != "") {
-                        		$post_data[$parameter->name] = $carrier_name;
-                        	} else {
-                        		$post_data[$parameter->name] = $shipping_data['carrier'];
-                        	}
+                           $carrier_name = $this->_MarketplaceTechnicalCodeCarriers($shipping_data);
+
+                           if($carrier_name && $carrier_name != "") {
+                              if($parameter->name == "Order_Shipping_CarrierName" ) {
+                              $post_data[$parameter->name] = $carrier_name['code'];
+                           } else {
+                              $post_data[$parameter->name] = $carrier_name['code'];
+                           }
+                           } else {
+                              $post_data[$parameter->name] = $shipping_data['carrier'];
+                           }
 
                         }
                         elseif($parameter->name == "Order_Shipping_EstimatedDeliveryDate") {
-                        	$post_data["Order_Shipping_EstimatedDeliveryDate"] = $today;
+                           $post_data["Order_Shipping_EstimatedDeliveryDate"] = $today;
                         }
 
                     }
@@ -181,5 +191,6 @@ private function _MarketplaceTechnicalCodeCarriers($shipping_data ) {
         }
 
     }
+
 
 }

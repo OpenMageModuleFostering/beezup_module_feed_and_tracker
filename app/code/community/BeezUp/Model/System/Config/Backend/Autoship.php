@@ -24,7 +24,11 @@ class Beezup_Model_System_Config_Backend_Autoship extends Mage_Core_Model_Config
                 foreach($dato['beezup'] as $b_key => $b) {
                     if($b_key == 0) { continue; }
                     $b = explode("|", $b);
-                    $retorno[$key][$b_key]['beezup_marketplace'] = $b[0];
+                    if($key == "Mirakl") {
+                        $key = $b[3];
+                    }
+
+                    $retorno[$key][$b_key]['beezup_marketplace'] = $b[3];
                     $retorno[$key][$b_key]['beezup_carrierCode'] = $b[2];
                     $retorno[$key][$b_key]['beezup_carrierName'] = $b[1];
                 }

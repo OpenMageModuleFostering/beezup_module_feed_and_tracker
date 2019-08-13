@@ -36,10 +36,14 @@ class Beezup_Block_Adminhtml_System_Config_Autoship extends Mage_Adminhtml_Block
         foreach($marketplaces as $key => $marketplace) {
             $tmpval = false;
 
+            $key = explode("-", $key);
+            $title = $key[1];
+            $key = $key[0];
+
             $html .= "<table class='data' style='margin-top:0px;margin-bottom:10px;'>";
             $html .= "<tbody>
                         <tr class='headings'>
-                        <th><span class='nobr'>".$key." Carriers</span></th>
+                        <th><span class='nobr'>".$title." Carriers</span></th>
                         <th><span class='nobr'>Magento Carriers</span><button style='float: right;
 margin-top: -20px;' class='scalable add 'onclick='addMarketCarrierMap(\"".$key."\")' type='button'>+</button></th>
                         </tr>
@@ -51,7 +55,7 @@ margin-top: -20px;' class='scalable add 'onclick='addMarketCarrierMap(\"".$key."
             //$marketplace = array_unique($marketplace);
             foreach($marketplace as $values) {
 
-                    $html .= "<option value='".$key."|".$values['name']."|".$values['code']."'>".$values['name']."</option>";
+                    $html .= "<option value='".$key."|".$values['name']."|".$values['code']."|".$values['marketplace_business_code']."'>".$values['name']."</option>";
             }
             $html .= "</select></td>";
 
@@ -68,7 +72,11 @@ top: 2px;' class='scalable add 'onclick='removeMarketTr(this.parentNode)' type='
 
 
 
-            foreach($autoship[$key] as $ship) {
+$localizador = $key;
+if($key == "Mirakl") {
+        $localizador = $title;
+}
+            foreach($autoship[$localizador] as $ship) {
 
                     $html .= "<tr>";
                     $html .= "<td><select name='groups[marketplace][fields][autoship_order_map][value][".$key."][beezup][]'>";
@@ -78,7 +86,7 @@ top: 2px;' class='scalable add 'onclick='removeMarketTr(this.parentNode)' type='
                         if($ship['beezup_carrierCode'] == $values['code']) {
                             $selected = "selected";
                         }
-                        $html .= "<option ".$selected." value='".$key."|".$values['name']."|".$values['code']."'>".$values['name']."</option>";
+                        $html .= "<option ".$selected." value='".$key."|".$values['name']."|".$values['code']."|".$values['marketplace_business_code']."'>".$values['name']."</option>";
                     }
                     $html .= "</select></td>";
 
