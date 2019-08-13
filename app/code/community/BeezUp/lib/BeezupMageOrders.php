@@ -210,13 +210,14 @@ private function updateInfoTab($result, $table) {
 			$query = "select * from ".$table."  where transaction_id = '".$this->id_order."'  ";
 			
 			$results = $this->connection->fetchAll($query);
+
 			if(!empty($results)) {
 				$result = $results[0];
-				if($result['shipping_amount'] != $this->data['shipping']) {
+			//	if($result['shipping_amount'] != $this->data['shipping']) {
 				$query = $this->getSalesInvoiceWriteQuery($result, $table);
 				$this->getConnection("core_write");
 				$this->connection->query($query);
-				}
+			//	}
 			}
 			
 		}
@@ -225,6 +226,8 @@ private function updateInfoTab($result, $table) {
 	
 		private function getSalesInvoiceWriteQuery($result, $table) {
 		$query = "update {$table} set base_shipping_amount = '{$this->data['shipping']}', shipping_amount = '{$this->data['shipping']}'" ;
+		$query .= $this->setQueryParameters($result, "shipping_incl_tax");
+		$query .= $this->setQueryParameters($result, "base_shipping_incl_tax");
 		$query .= $this->setQueryParameters($result, "base_grand_total", true);
 		$query .= $this->setQueryParameters($result, "grand_total", true);
 		$query .= "  where transaction_id = '{$this->id_order}'";
@@ -241,12 +244,15 @@ private function updateInfoTab($result, $table) {
 			$table = $this->getTableName("sales/order");
 			$query = "select * from ".$table." where entity_id = '".$this->id_order."'  ";
 			$results = $this->connection->fetchAll($query);
+
+	
 			if(!empty($results)) {	
 				$result = $results[0];
 
 				if($result['shipping_amount'] != $this->data['shipping']) {
 	
 				$query = $this->getSalesFlatWriteQuery($result, $table);
+
 				$this->getConnection("core_write");
 				$this->connection->query($query);
 				}
@@ -269,6 +275,8 @@ private function updateInfoTab($result, $table) {
 		$query .= $this->setQueryParameters($result, "total_paid", true);
 		$query .= $this->setQueryParameters($result, "base_total_paid", true);
 		$query .= $this->setQueryParameters($result, "total_paid", true);
+		$query .= $this->setQueryParameters($result, "shipping_incl_tax");
+		$query .= $this->setQueryParameters($result, "base_shipping_incl_tax");
 		$query .= "  where entity_id = '{$this->id_order}'";
 		return $query;
 	}
@@ -276,7 +284,7 @@ private function updateInfoTab($result, $table) {
 	
 	private function setQueryParameters($result, $column, $isTotal = false) {
 		$query = "";
-		if($result[$column] > 0 && !empty($result[$column])) {
+		if( !empty($result[$column])) {
 		if($isTotal) {
 			$data = ($result[$column] - $result['shipping_amount']) + $this->data['shipping'];
 			$query = " ,  ".$column." = '{$data}'";
