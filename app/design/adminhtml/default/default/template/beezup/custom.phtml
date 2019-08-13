@@ -1,340 +1,355 @@
 <div class="entry-edit">
     <div class="entry-edit-head">
         <h4><?php echo $this->__('BeezUP Info'); ?></h4>
-    </div>
-    <div class="fieldset fieldset-wide">
- 
-<?php 
-$order = $this->getOrder();
-$blnBeezup = false;
-$base_url = $url = Mage::getBaseUrl( Mage_Core_Model_Store::URL_TYPE_WEB, true );
-
-	  $resource = Mage::getSingleton('core/resource');
-		$readConnection = $resource->getConnection('core_read');
-		$table = $resource->getTableName('sales/order_grid');
-		$query = 'SELECT * FROM ' . $table . ' WHERE beezup_order = 1 and  entity_id = \''
-             . $order->getId() . '\' LIMIT 1';	 
-		$results = $readConnection->fetchAll($query);
- //var_dump($results);
- if($results[0]['beezup_order'] == 1) {
-	 $blnBeezup = true;
-
- $date = new DateTime($results[0]['beezup_marketplace_last_modification_date']);
-$beezup_marketplace_last_modification_date = $date->format('d-m-Y H:i:s'). " (UTC Time)";
- 
-  $date2 = new DateTime($results[0]['beezup_purchase_date']);
-$beezup_purchase_date = $date2->format('d-m-Y H:i:s'). " (UTC Time)";
-
-  $date3 = new DateTime($results[0]['beezup_last_modification_date']);
-$beezup_last_modification_date = $date3->format('d-m-Y H:i:s'). " (UTC Time)";
- 
- echo "<strong>".Mage::helper('beezup')->__('BeezUP Order Id:')." </strong> ".$results[0]['beezup_order_id']."<br>";
- echo "<strong>".Mage::helper('beezup')->__('BeezUP Status:')." </strong> ".$results[0]['beezup_status']."<br>";
- echo "<strong>".Mage::helper('beezup')->__('BeezUP Last Modification Date:')." </strong> ".$beezup_last_modification_date."<br>";
- echo "<strong>".Mage::helper('beezup')->__('Marketplace:')." </strong> ".$results[0]['beezup_marketplace']."<br>";
- echo "<strong>".Mage::helper('beezup')->__('Marketplace Order Id:')." </strong> ".$results[0]['beezup_market_order_id']."<br>";
- echo "<strong>".Mage::helper('beezup')->__('Marketplace Status:')." </strong> ".$results[0]['beezup_marketplace_status']."<br>";
- echo "<strong>".Mage::helper('beezup')->__('BeezUP Purchase Date: ')."</strong> ".$beezup_purchase_date ."<br>";
- echo "<strong>".Mage::helper('beezup')->__('Marketplace Last Modification Date:')." </strong> ".$beezup_marketplace_last_modification_date."<br>";
- echo "<strong>".Mage::helper('beezup')->__('BeezUP Total Paid: ')."</strong> ".$results[0]['beezup_total_paid']."<br>";
- if((int)$results[0]['beezup_comission'] > 0) {
-  echo "<strong>".Mage::helper('beezup')->__('BeezUP Total Commission:')." </strong> ".$results[0]['beezup_comission']."<br>";
- }
-  echo "<strong>".Mage::helper('beezup')->__('BeezUP Order Link:')." </strong> <a href='https://go.beezup.com/OrderManagement/Informations?BeezUPOrderUUId=".$results[0]['beezup_order_id']."&MarketplaceTechnicalCode=".$results[0]['beezup_marketplace']."&AccountId=".$results[0]['beezup_name']."' target='_blank'>https://go.beezup.com/OrderManagement/Informations?BeezUPOrderUUId=".$results[0]['beezup_order_id']."&MarketplaceTechnicalCode=".$results[0]['beezup_marketplace']."&AccountId=".$results[0]['beezup_name']."</a><br>";
- } else {
-	 
-	 echo Mage::helper('beezup')->__('No data here, since it\'s not an order coming from BeezUP');
- }
-  
-  ?>
-
-    </div>
-</div>
- <?php if($blnBeezup) {
-	 $firstname = Mage::getSingleton('admin/session')->getUser()->getFirstname();
-	 $lastname = Mage::getSingleton('admin/session')->getUser()->getLastname();
-	 $username = $firstname." ".$lastname;
-
-			$helper = Mage::helper('beezup');
-		 $userid = $helper->getConfig('beezup/marketplace/userid');
-		 $usertoken = $helper->getConfig('beezup/marketplace/usertoken');
-		 
-		 $order_actions = $this->getBeezupInfo($order->getId());
-	 ?>
-
-		 
-<style>
-#acciones {
-
-  width: 80%;
-  float: left;
-
-}
-.calendar {
-   left: 40% !important;
-position:fixed !Important;
-  top: 31% !Important;
-  z-index: 999999999 !Important;
- 
- }
- .beezup-modal-dialog {
-visibility:hidden;
-position: fixed;
-left: 0px;
-top: 20%;
-width: 30%;
-
-text-align: center;
-z-index: 1000;
-border: 2px solid gray;
-background: blue;
-z-index: 999999;
-margin: 0 auto;
-left: 0;
-right: 0;
-height: auto;
-padding-bottom:20px;
-background: white;
-z-index: 999999;
- }
- .popup-close {
-position:absolute;
-right:0;
-cursor: pointer;
-width: 30px;
-border: 1px solid #808080;
-height: 30px;
-line-height: 28px;
-font-size: 18px;
-background: gray;
-color: white;
-z-index: 999999999;
- }
- #fondo {
- visibility:hidden;
-position: fixed;
-height: 100%;
-width: 100%;
-background: #000 none repeat scroll 0% 0%;
-opacity: 0.5;
-top: 0;
-left: 0;
-z-index: 9999;
-
- }
-</style>
-
-<div id="fondo"></div>
-<div class="entry-edit">
-    <div class="entry-edit-head">
-        <h4><?php echo $this->__('BeezUP Order Status'); ?></h4>
-		</div>	
-		    <div class="fieldset fieldset-wide">
-			<div class="alert" id="msgAlert" style="display:none;padding: 10px;background-color: lightgrey; color:white;margin-bottom: 10px;"></div>
-			<div id="acciones">
- <?php 
- if($order_actions['is_pending'] == false) {
- foreach($order_actions as $key => $action) { 
- if(isset($action['action'])) {
-	 	$label = preg_replace('/(?<!\ )[A-Z]/', ' $0', $action['action']);
-	 ?>
- 
-					<button class="button" style="background:gray;border-color:gray;" onclick="overlay('<?php echo $action['action'];?>');"><?php echo $label;?></button>
-					
-					
-		<div id="overlay_<?php echo $action['action'];?>" class="beezup-modal-dialog">
-				<div>
-					<span class="popup-close" onclick="overlay('<?php echo $action['action'];?>');">X</span>
-					<h3 style="position: relative;top: 5px;color:gray;"><?php echo Mage::helper('beezup')->__('Update Order Status');?></h3>
-					<hr style="margin-top: 9px;color: gray; background: gray;">
-					<form id="Updateform_<?php echo $action['action'];?>">
-					<div style="margin-top:10px;padding:10px;">
-					<?php $inputs = $this->generateInput($action['parameters']);
-						echo $inputs;
-						?>
-						
-					</div>
-					<div id="submitBtn-<?php echo $action['action'];?>" style="  float: right;margin-right: 25px;"><button type="button" onclick="updateOrder('<?php echo $action['action'];?>');"    class="button" name="submit" ><?php echo Mage::helper('beezup')->__('Update');?></button></div>
-					</form>
-				</div>
-		</div>
-					
- <?php }
- } } else {?>
-	 
-	<div  style="padding: 10px;background-color: lightgrey; margin-bottom: 10px;"><?php echo Mage::helper('beezup')->__('Order is syncronizing, please resync within a few mins to get updated info');?></div>
-	 
- <?php } ?>
-			</div>
-	
-			  			  <button class="button" style="float:right;"   onclick="resync();"><?php echo Mage::helper('beezup')->__('Resync Order');?></button>
-			  <div id="ajax-loader" style="display:none;float:right;"><img src="<?php echo $base_url."/beezup/omstatus/loader";?>" /></div>
-			  <br>
-			  <div id="statusLoad" style="margin-top:15px;">
-			  </div>
-
-
-
 	</div>
-	
-</div>
-
-
-<script>
-var ajax = {};
-ajax.x = function() {
-    if (typeof XMLHttpRequest !== 'undefined') {
-        return new XMLHttpRequest();  
-    }
-    var versions = [
-        "MSXML2.XmlHttp.6.0",
-        "MSXML2.XmlHttp.5.0",   
-        "MSXML2.XmlHttp.4.0",  
-        "MSXML2.XmlHttp.3.0",   
-        "MSXML2.XmlHttp.2.0",  
-        "Microsoft.XmlHttp"
-    ];
-
-    var xhr;
-    for(var i = 0; i < versions.length; i++) {  
-        try {  
-            xhr = new ActiveXObject(versions[i]);  
-            break;  
-        } catch (e) {
-        }  
-    }
-    return xhr;
-};
-
-ajax.send = function(url, callback, method, data, sync) {
-    var x = ajax.x();
-    x.open(method, url, sync);
-    x.onreadystatechange = function() {
-        if (x.readyState == 4) {
-            callback(x.responseText)
-        }
-    };
-    if (method == 'POST') {
-        x.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    }
-    x.send(data)
-};
-
-ajax.get = function(url, data, callback, sync) {
-    var query = [];
-    for (var key in data) {
-        query.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
-    }
-    ajax.send(url + (query.length ? '?' + query.join('&') : ''), callback, 'GET', null, sync)
-};
-
-ajax.post = function(url, data, callback, sync) {
-    var query = [];
-    for (var key in data) {
-        query.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
-    }
-    ajax.send(url, callback, 'POST', query.join('&'), sync)
-};
-
-
-
-function resync() {
+    <div class="fieldset fieldset-wide">
+		
+		<?php 
+			$order = $this->getOrder();
+			
+			$shipment_collection = Mage::getResourceModel('sales/order_shipment_collection')
+            ->setOrderFilter($order)
+            ->load();
+			$shipping_data = array();
+			$shipping_data['tracking'] = "";
+			$shipping_data['carrier'] = "";
+			foreach($shipment_collection as $shipment){
+				foreach($shipment->getAllTracks() as $tracking_number){
+					$shipping_data['tracking'] = $tracking_number->getNumber();
+					$shipping_data['carrier'] = $tracking_number->getTitle();
+					break;
+				}	
+				break;
+			}
+			
+			$blnBeezup = false;
+			$base_url = $url = Mage::getBaseUrl( Mage_Core_Model_Store::URL_TYPE_WEB, true );
+			
+			$resource = Mage::getSingleton('core/resource');
+			$readConnection = $resource->getConnection('core_read');
+			$table = $resource->getTableName('sales/order_grid');
+			$query = 'SELECT * FROM ' . $table . ' WHERE beezup_order = 1 and  entity_id = \''
+			. $order->getId() . '\' LIMIT 1';	 
+			$results = $readConnection->fetchAll($query);
+			//var_dump($results);
+			if($results[0]['beezup_order'] == 1) {
+				$blnBeezup = true;
+				
+				$date = new DateTime($results[0]['beezup_marketplace_last_modification_date']);
+				$beezup_marketplace_last_modification_date = $date->format('d-m-Y H:i:s'). " (UTC Time)";
+				
+				$date2 = new DateTime($results[0]['beezup_purchase_date']);
+				$beezup_purchase_date = $date2->format('d-m-Y H:i:s'). " (UTC Time)";
+				
+				$date3 = new DateTime($results[0]['beezup_last_modification_date']);
+				$beezup_last_modification_date = $date3->format('d-m-Y H:i:s'). " (UTC Time)";
+				
+				echo "<strong>".Mage::helper('beezup')->__('BeezUP Order Id:')." </strong> ".$results[0]['beezup_order_id']."<br>";
+				echo "<strong>".Mage::helper('beezup')->__('BeezUP Status:')." </strong> ".$results[0]['beezup_status']."<br>";
+				echo "<strong>".Mage::helper('beezup')->__('BeezUP Last Modification Date:')." </strong> ".$beezup_last_modification_date."<br>";
+				echo "<strong>".Mage::helper('beezup')->__('Marketplace:')." </strong> ".ucfirst(strtolower($results[0]['beezup_marketplace_business_code']))."<br>";
+				echo "<strong>".Mage::helper('beezup')->__('Marketplace Order Id:')." </strong> ".$results[0]['beezup_market_order_id']."<br>";
+				echo "<strong>".Mage::helper('beezup')->__('Marketplace Status:')." </strong> ".$results[0]['beezup_marketplace_status']."<br>";
+				echo "<strong>".Mage::helper('beezup')->__('BeezUP Purchase Date: ')."</strong> ".$beezup_purchase_date ."<br>";
+				echo "<strong>".Mage::helper('beezup')->__('Marketplace Last Modification Date:')." </strong> ".$beezup_marketplace_last_modification_date."<br>";
+				echo "<strong>".Mage::helper('beezup')->__('BeezUP Total Paid: ')."</strong> ".$results[0]['beezup_total_paid']."<br>";
+				if((int)$results[0]['beezup_comission'] > 0) {
+					echo "<strong>".Mage::helper('beezup')->__('BeezUP Total Commission:')." </strong> ".$results[0]['beezup_comission']."<br>";
+				}
+				echo "<strong>".Mage::helper('beezup')->__('BeezUP Order Link:')." </strong> <a href='https://go.beezup.com/OrderManagement/Informations?BeezUPOrderUUId=".$results[0]['beezup_order_id']."&MarketplaceTechnicalCode=".$results[0]['beezup_marketplace']."&AccountId=".$results[0]['beezup_name']."' target='_blank'>https://go.beezup.com/OrderManagement/Informations?BeezUPOrderUUId=".$results[0]['beezup_order_id']."&MarketplaceTechnicalCode=".$results[0]['beezup_marketplace']."&AccountId=".$results[0]['beezup_name']."</a><br>";
+				} else {
+				
+				echo Mage::helper('beezup')->__('No data here, since it\'s not an order coming from BeezUP');
+			}
+			
+		?>
+		
+		</div>
+		</div>
+		<?php if($blnBeezup) {
+		$firstname = Mage::getSingleton('admin/session')->getUser()->getFirstname();
+		$lastname = Mage::getSingleton('admin/session')->getUser()->getLastname();
+		$username = $firstname." ".$lastname;
+		
+		$helper = Mage::helper('beezup');
+		$userid = $helper->getConfig('beezup/marketplace/userid');
+		$usertoken = $helper->getConfig('beezup/marketplace/usertoken');
+		$order_actions = $this->getBeezupInfo($order->getId());
+		?>
+		
+		
+		<style>
+		#acciones {
+		
+		width: 80%;
+		float: left;
+		
+		}
+		.calendar {
+		left: 40% !important;
+		position:fixed !Important;
+		top: 31% !Important;
+		z-index: 999999999 !Important;
+		
+		}
+		.beezup-modal-dialog {
+		visibility:hidden;
+		position: fixed;
+		left: 0px;
+		top: 20%;
+		width: 30%;
+		
+		text-align: center;
+		z-index: 1000;
+		border: 2px solid gray;
+		background: blue;
+		z-index: 999999;
+		margin: 0 auto;
+		left: 0;
+		right: 0;
+		height: auto;
+		padding-bottom:20px;
+		background: white;
+		z-index: 999999;
+		}
+		.popup-close {
+		position:absolute;
+		right:0;
+		cursor: pointer;
+		width: 30px;
+		border: 1px solid #808080;
+		height: 30px;
+		line-height: 28px;
+		font-size: 18px;
+		background: gray;
+		color: white;
+		z-index: 999999999;
+		}
+		#fondo {
+		visibility:hidden;
+		position: fixed;
+		height: 100%;
+		width: 100%;
+		background: #000 none repeat scroll 0% 0%;
+		opacity: 0.5;
+		top: 0;
+		left: 0;
+		z-index: 9999;
+		
+		}
+		</style>
+		
+		<div id="fondo"></div>
+		<div class="entry-edit">
+		<div class="entry-edit-head">
+		<h4><?php echo $this->__('BeezUP Order Status'); ?></h4>
+		</div>	
+		<div class="fieldset fieldset-wide">
+		<div class="alert" id="msgAlert" style="display:none;padding: 10px;background-color: lightgrey; color:white;margin-bottom: 10px;"></div>
+		<div id="acciones">
+		<?php 
+		if($order_actions['is_pending'] == false) {
+		foreach($order_actions as $key => $action) { 
+		if(isset($action['action'])) {
+		$label = preg_replace('/(?<!\ )[A-Z]/', ' $0', $action['action']);
+		?>
+		
+		<button class="button" style="background:gray;border-color:gray;" onclick="overlay('<?php echo $action['action'];?>');"><?php echo $label;?></button>
+		
+		
+		<div id="overlay_<?php echo $action['action'];?>" class="beezup-modal-dialog">
+		<div>
+		<span class="popup-close" onclick="overlay('<?php echo $action['action'];?>');">X</span>
+		<h3 style="position: relative;top: 5px;color:gray;"><?php echo Mage::helper('beezup')->__('Update Order Status');?></h3>
+		<hr style="margin-top: 9px;color: gray; background: gray;">
+		<form id="Updateform_<?php echo $action['action'];?>">
+		<div style="margin-top:10px;padding:10px;">
+		<?php $inputs = $this->generateInput($action['parameters'], $shipping_data);
+		echo $inputs;
+		?>
+		
+		</div>
+		<div id="submitBtn-<?php echo $action['action'];?>" style="  float: right;margin-right: 25px;"><button type="button" onclick="updateOrder('<?php echo $action['action'];?>');"    class="button" name="submit" ><?php echo Mage::helper('beezup')->__('Update');?></button></div>
+		</form>
+		</div>
+		</div>
+		
+		<?php }
+		} } else {?>
+		
+		<div  style="padding: 10px;background-color: lightgrey; margin-bottom: 10px;"><?php echo Mage::helper('beezup')->__('Order is syncronizing, please resync within a few mins to get updated info');?></div>
+		
+		<?php } ?>
+		</div>
+		
+		<button class="button" style="float:right;"   onclick="resync();"><?php echo Mage::helper('beezup')->__('Resync Order');?></button>
+		<div id="ajax-loader" style="display:none;float:right;"><img src="<?php echo $base_url."/beezup/omstatus/loader";?>" /></div>
+		<br>
+		<div id="statusLoad" style="margin-top:15px;">
+		</div>
+		
+		
+		
+		</div>
+		
+		</div>
+		
+		
+		<script>
+		var ajax = {};
+		ajax.x = function() {
+		if (typeof XMLHttpRequest !== 'undefined') {
+		return new XMLHttpRequest();  
+		}
+		var versions = [
+		"MSXML2.XmlHttp.6.0",
+		"MSXML2.XmlHttp.5.0",   
+		"MSXML2.XmlHttp.4.0",  
+		"MSXML2.XmlHttp.3.0",   
+		"MSXML2.XmlHttp.2.0",  
+		"Microsoft.XmlHttp"
+		];
+		
+		var xhr;
+		for(var i = 0; i < versions.length; i++) {  
+		try {  
+		xhr = new ActiveXObject(versions[i]);  
+		break;  
+		} catch (e) {
+		}  
+		}
+		return xhr;
+		};
+		
+		ajax.send = function(url, callback, method, data, sync) {
+		var x = ajax.x();
+		x.open(method, url, sync);
+		x.onreadystatechange = function() {
+		if (x.readyState == 4) {
+		callback(x.responseText)
+		}
+		};
+		if (method == 'POST') {
+		x.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		}
+		x.send(data)
+		};
+		
+		ajax.get = function(url, data, callback, sync) {
+		var query = [];
+		for (var key in data) {
+		query.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
+		}
+		ajax.send(url + (query.length ? '?' + query.join('&') : ''), callback, 'GET', null, sync)
+		};
+		
+		ajax.post = function(url, data, callback, sync) {
+		var query = [];
+		for (var key in data) {
+		query.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
+		}
+		ajax.send(url, callback, 'POST', query.join('&'), sync)
+		};
+		
+		
+		
+		function resync() {
 		document.getElementById("ajax-loader").style.display="block";
 		
-	 setTimeout(function () {	
-	 ajax.get('<?php echo $base_url."beezup/omstatus/resync";?>', {order_id : <?php echo $order->getId();?>, uid : '<?php echo  $userid;?>', token : '<?php echo $usertoken;?>'}, function(response) {
-document.getElementById("msgAlert").innerHTML = '';
-document.getElementById("msgAlert").style.display = "block";
-
+		setTimeout(function () {	
+		ajax.get('<?php echo $base_url."beezup/omstatus/resync";?>', {order_id : <?php echo $order->getId();?>, uid : '<?php echo  $userid;?>', token : '<?php echo $usertoken;?>'}, function(response) {
+		document.getElementById("msgAlert").innerHTML = '';
+		document.getElementById("msgAlert").style.display = "block";
+		
 		document.getElementById("ajax-loader").style.display="none";
-	 if(response == 1) {
+		if(response == 1) {
 		document.getElementById("msgAlert").innerHTML = '<?php echo Mage::helper('beezup')->__("Updated Order Ok page will refresh in 2 secc");?>';
-					document.getElementById("msgAlert").style.backgroundColor  = "green";
-
+		document.getElementById("msgAlert").style.backgroundColor  = "green";
+		
 		setTimeout(function () {	window.location='window.location.href'; } , 2000);
-	 } else if(response == 2) {
-	 		document.getElementById("msgAlert").innerHTML = '<?php echo Mage::helper('beezup')->__('Order has been refreshed with no change');?>';
-						document.getElementById("msgAlert").style.backgroundColor  = "orange";
-
-	 } else {
-	 		document.getElementById("msgAlert").innerHTML = '<?php echo Mage::helper('beezup')->__("Order is syncronizing, please resync within a few mins to get updated info");?>';
-			document.getElementById("msgAlert").style.backgroundColor  = "orange";
-
-
-	 }
-	 
-	});
-	
-	
-}, 1000);
-}
- function overlay(action) {
-	var  el = document.getElementById("overlay_"+action);
-   el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
-   var  fondo = document.getElementById("fondo");
-      fondo.style.visibility = (fondo.style.visibility == "visible") ? "hidden" : "visible";
- }
-
- 
- function updateOrder(action) {
- var form = document.getElementById('Updateform_'+action);
- var data = serialize(form);
- var btnSubmit = document.getElementById("submitBtn-"+action);
- var alert = document.getElementById("msgAlert");
- var  el = document.getElementById("overlay_"+action);
-  var  fondo = document.getElementById("fondo");
-  var acciones = document.getElementById("acciones");
- btnSubmit.innerHTML = "<img src='<?php echo $base_url."/beezup/omstatus/loader";?>' />";
-  ajax.get('<?php echo $base_url."beezup/omstatus/update?"?>'+data+"&adminUser=<?php echo  $username;?>&order_id=<?php echo $order->getId();?>&uid=<?php echo  $userid;?>&token=<?php echo $usertoken;?>&action_id="+action, {}, function(response) {
-	
-if (response.indexOf("SUCCESS") !=-1) {
-	 alert.style.backgroundColor  = "green";
-
-} else {
-	 alert.style.backgroundColor  = "red";
-
-	
-}
-	
+		} else if(response == 2) {
+		document.getElementById("msgAlert").innerHTML = '<?php echo Mage::helper('beezup')->__('Order has been refreshed with no change');?>';
+		document.getElementById("msgAlert").style.backgroundColor  = "orange";
+		
+		} else {
+		document.getElementById("msgAlert").innerHTML = '<?php echo Mage::helper('beezup')->__("Order is syncronizing, please resync within a few mins to get updated info");?>';
+		document.getElementById("msgAlert").style.backgroundColor  = "orange";
+		
+		
+		}
+		
+		});
+		
+		
+		}, 1000);
+		}
+		function overlay(action) {
+		var  el = document.getElementById("overlay_"+action);
+		el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
+		var  fondo = document.getElementById("fondo");
+		fondo.style.visibility = (fondo.style.visibility == "visible") ? "hidden" : "visible";
+		}
+		
+		
+		function updateOrder(action) {
+		var form = document.getElementById('Updateform_'+action);
+		var data = serialize(form);
+		var btnSubmit = document.getElementById("submitBtn-"+action);
+		var alert = document.getElementById("msgAlert");
+		var  el = document.getElementById("overlay_"+action);
+		var  fondo = document.getElementById("fondo");
+		var acciones = document.getElementById("acciones");
+		btnSubmit.innerHTML = "<img src='<?php echo $base_url."/beezup/omstatus/loader";?>' />";
+		ajax.get('<?php echo $base_url."beezup/omstatus/update?"?>'+data+"&adminUser=<?php echo  $username;?>&order_id=<?php echo $order->getId();?>&uid=<?php echo  $userid;?>&token=<?php echo $usertoken;?>&action_id="+action, {}, function(response) {
+		
+		if (response.indexOf("SUCCESS") !=-1) {
+		alert.style.backgroundColor  = "green";
+		
+		} else {
+		alert.style.backgroundColor  = "red";
+		
+		
+		}
+		
 		alert.innerHTML = response;
 		alert.style.display="block";
 		btnSubmit.innerHTML = "";
-	     fondo.style.visibility = (fondo.style.visibility == "visible") ? "hidden" : "visible";
-		 el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
-		 acciones.innerHTML = "";
-		 	 setTimeout(function () {	
-		 resync();
-			 }, 2000);
-	  });
-	
- 
- console.log(data);
- }
- 
-
- 
- 
- function serialize(form) {
-    var field, s = [];
-    if (typeof form == 'object' && form.nodeName == "FORM") {
-        var len = form.elements.length;
-        for (i=0; i<len; i++) {
-            field = form.elements[i];
-            if (field.name && !field.disabled && field.type != 'file' && field.type != 'reset' && field.type != 'submit' && field.type != 'button') {
-                if (field.type == 'select-multiple') {
-                    for (j=form.elements[i].options.length-1; j>=0; j--) {
-                        if(field.options[j].selected)
-                            s[s.length] = encodeURIComponent(field.name) + "=" + encodeURIComponent(field.options[j].value);
-                    }
-                } else if ((field.type != 'checkbox' && field.type != 'radio') || field.checked) {
-                    s[s.length] = encodeURIComponent(field.name) + "=" + encodeURIComponent(field.value);
-                }
-            }
-        }
-    }
-    return s.join('&').replace(/%20/g, '+');
-}
-</script>
-	
-<?php	
-	} ?>
+		fondo.style.visibility = (fondo.style.visibility == "visible") ? "hidden" : "visible";
+		el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
+		acciones.innerHTML = "";
+		setTimeout(function () {	
+		resync();
+		}, 2000);
+		});
+		
+		
+		console.log(data);
+		}
+		
+		
+		
+		
+		function serialize(form) {
+		var field, s = [];
+		if (typeof form == 'object' && form.nodeName == "FORM") {
+		var len = form.elements.length;
+		for (i=0; i<len; i++) {
+		field = form.elements[i];
+		if (field.name && !field.disabled && field.type != 'file' && field.type != 'reset' && field.type != 'submit' && field.type != 'button') {
+		if (field.type == 'select-multiple') {
+		for (j=form.elements[i].options.length-1; j>=0; j--) {
+		if(field.options[j].selected)
+		s[s.length] = encodeURIComponent(field.name) + "=" + encodeURIComponent(field.options[j].value);
+		}
+		} else if ((field.type != 'checkbox' && field.type != 'radio') || field.checked) {
+		s[s.length] = encodeURIComponent(field.name) + "=" + encodeURIComponent(field.value);
+		}
+		}
+		}
+		}
+		return s.join('&').replace(/%20/g, '+');
+		}
+		</script>
+		
+		<?php	
+		} ?>												

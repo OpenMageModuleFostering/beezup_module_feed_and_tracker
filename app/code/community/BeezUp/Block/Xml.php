@@ -1,5 +1,6 @@
 <?php
 	ini_set('memory_limit','1024M');
+	
 	class BeezUp_Block_Xml extends Mage_Core_Block_Text
 	{
 		/**
@@ -13,10 +14,20 @@
 			$helper = Mage::helper('beezup');
 			$category_logic = $helper->getConfig('beezup/flux/category_logic');
 			/* Initially load the useful elements */
+			
+			$shipping_logic = $helper->getConfig('beezup/flux/carrier_method');
+			if($shipping_logic == 1) {
+				$shipping_carrier = $helper->getConfig('beezup/flux/shipping_carrier');
+				$default_country = $helper->getConfig('beezup/flux/default_country');
+			}
+			
+			$default_shipping_cost = (int)$helper->getConfig('beezup/flux/default_shipping_cost');
 			$many_images = $helper->getConfig('beezup/flux/images');
 			$_ht = $helper->getConfig('beezup/flux/ht');
 			$_description = $helper->getConfig('beezup/flux/description');
-			$_tablerates = $helper->getConfig('beezup/flux/tablerates_weight_destination') ? $beezup->getTablerates() : 0;
+			$_description = explode(",", $_description);
+			$enable_html = $helper->getConfig('beezup/flux/description_html');
+			$_tablerates =0;
 			$cat_logic = false;
 			if($category_logic == 1) {
 				$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
@@ -32,10 +43,9 @@
 			
 			$_attributes = $helper->getConfig('beezup/flux/attributes') ? explode(',', $helper->getConfig('beezup/flux/attributes')) : array();
 			$_vat = ($_ht && is_numeric($helper->getConfig('beezup/flux/vat'))) ? (preg_replace('(\,+)', '.', $helper->getConfig('beezup/flux/vat')) / 100) + 1 : 1;
-			$_catalog_rules = $helper->getConfig('beezup/flux/catalog_rules');
-			
+		//	$_catalog_rules = $helper->getConfig('beezup/flux/catalog_rules');
 			/* Build file */
-			$xml = $helper->getConfig('beezup/flux/bom') ? "\xEF\xBB\xBF" : '';
+			$xml = "\xEF\xBB\xBF";
 			$xml .= '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL . '<catalog>' . PHP_EOL;
 			
 			$products = $beezup->getProducts();
@@ -43,9 +53,9 @@
 				$backendModel = $products->getResource()->getAttribute('media_gallery')->getBackend();
 			}
 			
-			
+			//$productModel = Mage::getModel('catalog/product');
 			foreach ($products as $p) {
-							if($category_logic == 1) {
+				if($category_logic == 1) {
 					$categories = $beezup->getProductsCategories($p, $_categories);
 					} else {
 					
@@ -62,14 +72,34 @@
 					$image = $p->getSmallImage();
 					
 					
+					//$precio = Mage::getModel('catalogrule/rule')->calcProductPriceRule($p,$p->getPrice());
 					
 					
 					$xml .= '<product>';
+					//	$productModel->load($p->getId());
 					$xml .= $helper->tag($this->__('b_unique_id'), $p->getId());
 					$xml .= $helper->tag($this->__('b_sku'), trim($p->getSku()), 1);
 					$xml .= $helper->tag($this->__('b_title'), trim($p->getName()), 1);
-					$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($_description))), 1);
+					//	$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($_description))), 1);
+					
+					foreach($_description  as $desc) {
+						if($enable_html == 1) {
+							$xml .= $helper->tag($this->__('b_'.$desc), $p->getData($desc), 1);
+							} else {
+							$xml .= $helper->tag($this->__('b_'.$desc), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($desc))), 1);
+						}
+					}
+					
 					$xml .= $helper->tag($this->__('b_product_url'), $p->getProductUrl(), 1);
+					$special_price = $p->getSpecialPrice();
+					if(!empty($special_price) && $special_price > 0) {
+						$special_date = $p->getSpecialToDate();
+						if (strtotime($special_date) >= time() || empty($special_date)) {
+							$final_price = $p->getSpecialPrice();
+							//$xml .= $helper->tag($this->__('precio'), $p->getSpecialPrice(), 1);
+						}
+					}	
+					
 					
 					
 					
@@ -91,28 +121,22 @@
 						
 					} 
 					
-					/*
-						//we get all category id's from product
-						$currentCatIds = $product->getCategoryIds();
-						//we get a collection of the categories from the ids
-						$categoryCollection = Mage::getResourceModel('catalog/category_collection')
-						->addAttributeToSelect('name')
-						->addAttributeToSelect('url')
-						->addAttributeToFilter('entity_id', $currentCatIds)
-						->addIsActiveFilter();
-						$inc_cat = 0;
-						//loop through category collection to add to xml categories
-						foreach($categoryCollection as $cat){
-						$inc_cat++;
-						$xml .= $helper->tag($this->__('b_product_category_'.$inc_cat), $cat->getUrl(), 1);
-					}		*/
 					
-					
-					//   $xml .= $helper->tag($this->__('b_product_image'), $helper->getImageDir() . $image, 1);
 					$xml .= $helper->tag($this->__('b_availability'), $stock, 1);
 					$xml .= $helper->tag($this->__('b_qty'), $qty);
 					$xml .= $helper->tag($this->__('b_delivery'), $shipping, 1);
-					$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($p->getWeight(), $_tablerates)));
+					
+					if($shipping_logic == 1) {
+						$shipping_rate = $beezup->_getShippingPrice($p, $shipping_carrier, $default_country);
+						if($shipping_rate == 0 && $default_shipping_cost > 0) {
+							$shipping_rate = $default_shipping_cost;
+						}
+						$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($shipping_rate));
+						} else {
+						$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($p->getWeight(), $_tablerates)));
+					}
+					
+					
 					$xml .= $helper->tag($this->__('b_weight'), $helper->currency($p->getWeight()));
 					$xml .= $helper->tag($this->__('b_price'), $helper->currency($final_price*$_vat));
 					if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
@@ -145,10 +169,18 @@
 			$helper = Mage::helper('beezup');
 			$category_logic = $helper->getConfig('beezup/flux/category_logic');
 			/* Initially load the useful elements */
+			$shipping_logic = $helper->getConfig('beezup/flux/carrier_method');
+			if($shipping_logic == 1) {
+				$shipping_carrier = $helper->getConfig('beezup/flux/shipping_carrier');
+				$default_country = $helper->getConfig('beezup/flux/default_country');
+			}
+			$default_shipping_cost = (int)$helper->getConfig('beezup/flux/default_shipping_cost');
 			$many_images = $helper->getConfig('beezup/flux/images');
 			$_ht 				= $helper->getConfig('beezup/flux/ht');
-			$_description 		= $helper->getConfig('beezup/flux/description');
-			$_tablerates 		= $helper->getConfig('beezup/flux/tablerates_weight_destination') ? $beezup->getTablerates() : 0;
+			$_description = $helper->getConfig('beezup/flux/description');
+			$_description = explode(",", $_description);
+			$enable_html = $helper->getConfig('beezup/flux/description_html');
+			$_tablerates 		=  0;
 			$cat_logic = false;
 			if($category_logic == 1) {
 				$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
@@ -163,10 +195,10 @@
 			}    
 			$_attributes 		= $helper->getConfig('beezup/flux/attributes') ? explode(',', $helper->getConfig('beezup/flux/attributes')) : array();
 			$_vat 				= ($_ht && is_numeric($helper->getConfig('beezup/flux/vat'))) ? (preg_replace('(\,+)', '.', $helper->getConfig('beezup/flux/vat')) / 100) + 1 : 1;
-			$_catalog_rules 	= $helper->getConfig('beezup/flux/catalog_rules');
+		//	$_catalog_rules 	= $helper->getConfig('beezup/flux/catalog_rules');
 			
 			/* Build file */
-			$xml = $helper->getConfig('beezup/flux/bom') ? "\xEF\xBB\xBF" : '';
+			$xml =  "\xEF\xBB\xBF";
 			$xml .= '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL . '<catalog>' . PHP_EOL;
 			
 			//récupére tous les produits
@@ -174,10 +206,10 @@
 			$childs = $beezup->getConfigurableProducts(true);
 			$backendModel = $products->getResource()->getAttribute('media_gallery')->getBackend();
 			$products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE);
-
+			
 			//parcours les produits
 			foreach ($products as $p) {
-
+				
 				if($many_images == 1) {
 					$backendModel->afterLoad($p); //adding media gallery to the product object
 					$datos = $p->getData();
@@ -189,9 +221,9 @@
 					
 					$categories = $beezup->getProductsCategories2($p, $_categories);		
 				}
-			//	$varationTheme = $beezup->getOptions($p);
+				//	$varationTheme = $beezup->getOptions($p);
 				//we get product object from catalog/product reason(beezup/products gets products from catalog/product_collection, didn't find the way to get image collection from there *will check)
-
+				
 				if (count($categories)) {
 					//si l'élément est un père, on va traiter ces enfants
 					if(isset($childs[$p->getId()])) {	
@@ -205,83 +237,101 @@
 							$final_price 	= $c->getFinalPrice();
 							$image 			= $this->fillImageUrl($p, $c);
 							
-						//DBG
-						if (0)
-						{
-							echo "----------------------------"						."<br/>";
-							echo "Name : "		.$c->getName()						."<br/>";
-							echo "Id : "		.$c->getId()						."<br/>";
-							echo "Parent Id : "	.$p->getId()							."<br/>";
-							echo "Url : "		.$p->getProductUrl()				."<br/>";
-							echo "Image : "		.$helper->getImageDir().$image 		."<br/>";
-							
-							
-							echo "SKU : "		.$c->getSku()						."<br/>";
-							echo "Quantity : " 	.$qty 								."<br/>";
-							echo "Stock : " 	.$stock 							."<br/>";
-							echo "Shipping : " 	.$shipping 							."<br/>";
-							echo "price : "		.$price 							."<br/>";
-				//			echo "finalprice : ".$final_price 						."<br/>";
-							echo "specialprice : ".$c->getSpecialPrice() 			."<br/>";
-						}
-						
-						
-						$xml .= '<product>';
-						$xml .= $helper->tag($this->__('b_unique_id'), $c->getId());
-						$xml .= $helper->tag($this->__('b_sku'), trim($c->getSku()), 1);
-						
-						$xml .= $helper->tag($this->__('parent_or_child'), 'child', 1);
-						$xml .= $helper->tag($this->__('parent_id'), $p->getId());
-						//$xml .= $helper->tag($this->__('variation-theme'), $varationTheme, 1);
-						
-						$xml .= $helper->tag($this->__('b_title'), trim($p->getName()), 1);
-						$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($_description))), 1);
-						$xml .= $helper->tag($this->__('b_product_url'), $p->getProductUrl(), 1);
-						
-						$xml .= $helper->tag($this->__('url_image'), $helper->getImageDir() . $image, 1);
-						if($many_images==1)		{
-							
-							$product = Mage::getModel('catalog/product')->load( $c->getId());
-							$inc = 1;
-							foreach ($product->getMediaGalleryImages() as $img) {
-								if( $helper->getImageDir() . $image !== $img->getUrl()) {
-									$inc++;
-									$xml .= $helper->tag($this->__('url_image')."_".$inc, $img->getUrl(), 1);
-								}
+							//DBG
+							if (0)
+							{
+								echo "----------------------------"						."<br/>";
+								echo "Name : "		.$c->getName()						."<br/>";
+								echo "Id : "		.$c->getId()						."<br/>";
+								echo "Parent Id : "	.$p->getId()							."<br/>";
+								echo "Url : "		.$p->getProductUrl()				."<br/>";
+								echo "Image : "		.$helper->getImageDir().$image 		."<br/>";
 								
+								
+								echo "SKU : "		.$c->getSku()						."<br/>";
+								echo "Quantity : " 	.$qty 								."<br/>";
+								echo "Stock : " 	.$stock 							."<br/>";
+								echo "Shipping : " 	.$shipping 							."<br/>";
+								echo "price : "		.$price 							."<br/>";
+								//			echo "finalprice : ".$final_price 						."<br/>";
+								echo "specialprice : ".$c->getSpecialPrice() 			."<br/>";
 							}
 							
-							if($inc==1 && ($c->getImage() == "no_selection" || $c->getImage()=="" || $c->getSmallImage() == "no_selection" || $c->getSmallImage() == "")) { //if there are no child pictures
+							
+							$xml .= '<product>';
+							$xml .= $helper->tag($this->__('b_unique_id'), $c->getId());
+							$xml .= $helper->tag($this->__('b_sku'), trim($c->getSku()), 1);
+							
+							$xml .= $helper->tag($this->__('parent_or_child'), 'child', 1);
+							$xml .= $helper->tag($this->__('parent_id'), $p->getId());
+							//$xml .= $helper->tag($this->__('variation-theme'), $varationTheme, 1);
+							
+							$xml .= $helper->tag($this->__('b_title'), trim($p->getName()), 1);
+							//$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($_description))), 1);
+							foreach($_description  as $desc) {
+								if($enable_html == 1) {
+									$xml .= $helper->tag($this->__('b_'.$desc), $p->getData($desc), 1);
+									} else {
+									$xml .= $helper->tag($this->__('b_'.$desc), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($desc))), 1);
+								}
+							}
+							
+							$xml .= $helper->tag($this->__('b_product_url'), $p->getProductUrl(), 1);
+							
+							$xml .= $helper->tag($this->__('url_image'), $helper->getImageDir() . $image, 1);
+							if($many_images==1)		{
 								
-								$product = Mage::getModel('catalog/product')->load( $p->getId());
+								$product = Mage::getModel('catalog/product')->load( $c->getId());
 								$inc = 1;
 								foreach ($product->getMediaGalleryImages() as $img) {
 									if( $helper->getImageDir() . $image !== $img->getUrl()) {
 										$inc++;
 										$xml .= $helper->tag($this->__('url_image')."_".$inc, $img->getUrl(), 1);
 									}
+									
 								}
 								
-								
+								if($inc==1 && ($c->getImage() == "no_selection" || $c->getImage()=="" || $c->getSmallImage() == "no_selection" || $c->getSmallImage() == "")) { //if there are no child pictures
+									
+									$product = Mage::getModel('catalog/product')->load( $p->getId());
+									$inc = 1;
+									foreach ($product->getMediaGalleryImages() as $img) {
+										if( $helper->getImageDir() . $image !== $img->getUrl()) {
+											$inc++;
+											$xml .= $helper->tag($this->__('url_image')."_".$inc, $img->getUrl(), 1);
+										}
+									}
+									
+									
+								}
+							} 		
+							$xml .= $helper->tag($this->__('b_availability'), $stock, 1);
+							$xml .= $helper->tag($this->__('b_qty'), $qty);
+							$xml .= $helper->tag($this->__('b_delivery'), $shipping, 1);
+							
+							if($shipping_logic == 1) {
+								$shipping_rate = $beezup->_getShippingPrice($c, $shipping_carrier, $default_country);
+								if($shipping_rate == 0 && $default_shipping_cost > 0) {
+									$shipping_rate = $default_shipping_cost;
+								}
+								$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($shipping_rate));
+								} else {
+								$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($c->getWeight(), $_tablerates)));
+							}							
+							
+							$xml .= $helper->tag($this->__('b_weight'), $helper->currency($c->getWeight()));
+							$xml .= $helper->tag($this->__('b_price'), $helper->currency($final_price*$_vat));
+							if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
+							$i = 1;
+							
+							
+							foreach ($categories as $v) $xml .= $helper->tag($this->__('b_category_%s', $i++), $v, 1);
+							foreach ($_attributes as $a) {
+								$value = $c->getResource()->getAttribute($a)->getFrontend()->getValue($c);
+								$xml .= $helper->tag($a, is_float($value) ? $helper->currency($value) : $value, is_float($value) ? 0 : 1);
 							}
-						} 		
-						$xml .= $helper->tag($this->__('b_availability'), $stock, 1);
-						$xml .= $helper->tag($this->__('b_qty'), $qty);
-						$xml .= $helper->tag($this->__('b_delivery'), $shipping, 1);
-						$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($c->getWeight(), $_tablerates)));
-						$xml .= $helper->tag($this->__('b_weight'), $helper->currency($c->getWeight()));
-						$xml .= $helper->tag($this->__('b_price'), $helper->currency($final_price*$_vat));
-						if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
-						$i = 1;
-						
-		
-						foreach ($categories as $v) $xml .= $helper->tag($this->__('b_category_%s', $i++), $v, 1);
-						foreach ($_attributes as $a) {
-							$value = $c->getResource()->getAttribute($a)->getFrontend()->getValue($c);
-							$xml .= $helper->tag($a, is_float($value) ? $helper->currency($value) : $value, is_float($value) ? 0 : 1);
-						}
-						$xml .= '</product>' . PHP_EOL;
-
+							$xml .= '</product>' . PHP_EOL;
+							
 						}
 						
 						$qty = $beezup->getQty($p->getId());
@@ -300,10 +350,17 @@
 						
 						$xml .= $helper->tag($this->__('parent_or_child'), 'parent', 1);
 						$xml .= $helper->tag($this->__('parent_id'), '');
-					//	$xml .= $helper->tag($this->__('variation-theme'), $varationTheme, 1);
+						//	$xml .= $helper->tag($this->__('variation-theme'), $varationTheme, 1);
 						
 						$xml .= $helper->tag($this->__('b_title'), trim($p->getName()), 1);
-						$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($_description))), 1);
+						//$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($_description))), 1);
+						foreach($_description  as $desc) {
+							if($enable_html == 1) {
+								$xml .= $helper->tag($this->__('b_'.$desc), $p->getData($desc), 1);
+								} else {
+								$xml .= $helper->tag($this->__('b_'.$desc), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($desc))), 1);
+							}
+						}
 						$xml .= $helper->tag($this->__('b_product_url'), $p->getProductUrl(), 1);
 						$xml .= $helper->tag($this->__('url_image'), $helper->getImageDir() . $image, 1);		
 						if($many_images == 1) {
@@ -325,7 +382,17 @@
 						$xml .= $helper->tag($this->__('b_availability'), $stock, 1);
 						$xml .= $helper->tag($this->__('b_qty'), $qty);
 						$xml .= $helper->tag($this->__('b_delivery'), $shipping, 1);
-						$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($p->getWeight(), $_tablerates)));
+						
+						if($shipping_logic == 1) {
+							$shipping_rate = $beezup->_getShippingPrice($p, $shipping_carrier, $default_country);
+							if($shipping_rate == 0 && $default_shipping_cost > 0) {
+								$shipping_rate = $default_shipping_cost;
+							}
+							$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($shipping_rate));
+							} else {
+							$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($p->getWeight(), $_tablerates)));
+						}		
+						
 						$xml .= $helper->tag($this->__('b_weight'), $helper->currency($p->getWeight()));
 						$xml .= $helper->tag($this->__('b_price'), $helper->currency($final_price*$_vat));
 						if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
@@ -339,7 +406,7 @@
 						$xml .= '</product>' . PHP_EOL;
 					}
 				}
-						}
+			}
 			
 			$product_simple = $beezup->getProductsSimple();
 			$backendModelSimple = $product_simple->getResource()->getAttribute('media_gallery')->getBackend();
@@ -373,7 +440,14 @@
 					$xml .= $helper->tag($this->__('variation-theme'), '', 1);
 					
 					$xml .= $helper->tag($this->__('b_title'), trim($p->getName()), 1);
-					$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($_description))), 1);
+					//$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($_description))), 1);
+					foreach($_description  as $desc) {
+						if($enable_html == 1) {
+							$xml .= $helper->tag($this->__('b_'.$desc), $p->getData($desc), 1);
+							} else {
+							$xml .= $helper->tag($this->__('b_'.$desc), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($p->getData($desc))), 1);
+						}
+					}
 					$xml .= $helper->tag($this->__('b_product_url'), $p->getProductUrl(), 1);
 					$xml .= $helper->tag($this->__('url_image'), $helper->getImageDir() . $image, 1);
 					if($many_images == 1) {
@@ -396,7 +470,15 @@
 					$xml .= $helper->tag($this->__('b_availability'), $stock, 1);
 					$xml .= $helper->tag($this->__('b_qty'), $qty);
 					$xml .= $helper->tag($this->__('b_delivery'), $shipping, 1);
-					$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($p->getWeight(), $_tablerates)));
+					if($shipping_logic == 1) {
+						$shipping_rate = $beezup->_getShippingPrice($p, $shipping_carrier, $default_country);
+						if($shipping_rate == 0 && $default_shipping_cost > 0) {
+							$shipping_rate = $default_shipping_cost;
+						}
+						$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($shipping_rate));
+						} else {
+						$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($p->getWeight(), $_tablerates)));
+					}		
 					$xml .= $helper->tag($this->__('b_weight'), $helper->currency($p->getWeight()));
 					$xml .= $helper->tag($this->__('b_price'), $helper->currency($final_price*$_vat));
 					if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
@@ -428,10 +510,18 @@
 			$helper = Mage::helper('beezup');
 			$category_logic = $helper->getConfig('beezup/flux/category_logic');
 			/* Initially load the useful elements */
+			$shipping_logic = $helper->getConfig('beezup/flux/carrier_method');
+			if($shipping_logic == 1) {
+				$shipping_carrier = $helper->getConfig('beezup/flux/shipping_carrier');
+				$default_country = $helper->getConfig('beezup/flux/default_country');
+			}
+			$default_shipping_cost = (int)$helper->getConfig('beezup/flux/default_shipping_cost');
 			$many_images = $helper->getConfig('beezup/flux/images');
 			$_ht = $helper->getConfig('beezup/flux/ht');
 			$_description = $helper->getConfig('beezup/flux/description');
-			$_tablerates = $helper->getConfig('beezup/flux/tablerates_weight_destination') ? $beezup->getTablerates() : 0;
+			$_description = explode(",", $_description);
+			$enable_html = $helper->getConfig('beezup/flux/description_html');
+			$_tablerates =  0;
 			$cat_logic = false;
 			if($category_logic == 1) {
 				$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
@@ -446,10 +536,10 @@
 			}  
 			$_attributes = $helper->getConfig('beezup/flux/attributes') ? explode(',', $helper->getConfig('beezup/flux/attributes')) : array();
 			$_vat = ($_ht && is_numeric($helper->getConfig('beezup/flux/vat'))) ? (preg_replace('(\,+)', '.', $helper->getConfig('beezup/flux/vat')) / 100) + 1 : 1;
-			$_catalog_rules = $helper->getConfig('beezup/flux/catalog_rules');
+		//	$_catalog_rules = $helper->getConfig('beezup/flux/catalog_rules');
 			
 			/* Build file */
-			$xml = $helper->getConfig('beezup/flux/bom') ? "\xEF\xBB\xBF" : '';
+			$xml = "\xEF\xBB\xBF";
 			$xml .= '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL . '<catalog>' . PHP_EOL;
 			
 			$childs = $beezup->getConfigurableProducts(false);
@@ -462,14 +552,16 @@
 					$productParent = Mage::getModel('catalog/product')->load($productParentId);
 					$image=$productParent->getImage(); 
 					if($category_logic == 1) {
-					$categories = $beezup->getProductsCategories($p, $_categories);
-					} else {
-					
-					$categories = $beezup->getProductsCategories2($p, $_categories);		
-				}
+						$categories = $beezup->getProductsCategories($p, $_categories);
+						} else {
+						
+						$categories = $beezup->getProductsCategories2($p, $_categories);		
+					}
 					$url = $productParent->getProductUrl();
 					$name = $productParent->getName();
-					$description = $productParent->getData($_description);
+					$description_short = $productParent->getData("short_description");
+					$description =  $productParent->getData("description");
+					
 				}
 				
 				if(count($categories)){
@@ -488,20 +580,12 @@
 					$xml .= $helper->tag($this->__('parent_id'), $c->getParentId());			
 					
 					$xml .= $helper->tag($this->__('b_title'), trim($name), 1);
-					$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($description)), 1);
+					//$xml .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($description)), 1);
+					$xml .= $helper->tag($this->__('b_description_short'), $description_short, 1);
+					$xml .= $helper->tag($this->__('b_description'), $description, 1);
 					$xml .= $helper->tag($this->__('b_product_url'), $url, 1);
 					
-					/*$inc = 0;						
-						$product = Mage::getModel('catalog/product')->load( $c->getId());
-						
-						foreach ($product->getMediaGalleryImages() as $image) {
-						$inc++;
-						if($inc==1) {
-						$xml .= $helper->tag($this->__('url_image'), $image->getUrl(), 1);
-						} else {
-						$xml .= $helper->tag($this->__('url_image')."_".$inc, $image->getUrl(), 1);
-						}
-					}*/
+					
 					$xml .= $helper->tag($this->__('url_image'), $helper->getImageDir() . $image, 1); //récupère l'image sur le père
 					
 					if($many_images == 1) {
@@ -521,7 +605,16 @@
 					$xml .= $helper->tag($this->__('b_availability'), $stock, 1);
 					$xml .= $helper->tag($this->__('b_qty'), $qty);
 					$xml .= $helper->tag($this->__('b_delivery'), $shipping, 1);
-					$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($c->getWeight(), $_tablerates)));
+					if($shipping_logic == 1) {
+						$shipping_rate = $beezup->_getShippingPrice($c, $shipping_carrier, $default_country);
+						if($shipping_rate == 0 && $default_shipping_cost > 0) {
+							$shipping_rate = $default_shipping_cost;
+						}
+						$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($shipping_rate));
+						} else {
+						$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($c->getWeight(), $_tablerates)));
+					}		
+					
 					$xml .= $helper->tag($this->__('b_weight'), $helper->currency($c->getWeight()));
 					$xml .= $helper->tag($this->__('b_price'), $helper->currency($final_price*$_vat));
 					if ($price != $final_price) $xml .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));
@@ -553,22 +646,31 @@
 			$helper = Mage::helper('beezup');
 			$category_logic = $helper->getConfig('beezup/flux/category_logic');
 			/* Initially load the useful elements */
+			$shipping_logic = $helper->getConfig('beezup/flux/carrier_method');
+			if($shipping_logic == 1) {
+				$shipping_carrier = $helper->getConfig('beezup/flux/shipping_carrier');
+				$default_country = $helper->getConfig('beezup/flux/default_country');
+			}
+			
+			$default_shipping_cost = (int)$helper->getConfig('beezup/flux/default_shipping_cost');
 			$many_images = $helper->getConfig('beezup/flux/images');
 			$_ht 				= $helper->getConfig('beezup/flux/ht');
-			$_description 		= $helper->getConfig('beezup/flux/description');
-			$_tablerates 		= $helper->getConfig('beezup/flux/tablerates_weight_destination') ? $beezup->getTablerates() : 0;
+			$_description = $helper->getConfig('beezup/flux/description');
+			$_description = explode(",", $_description);
+			$enable_html = $helper->getConfig('beezup/flux/description_html');
+			$_tablerates 		=  0;
 			$cat_logic = false;
-		
-				$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
-
-		
+			
+			$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
+			
+			
 			$_vat 				= ($_ht && is_numeric($helper->getConfig('beezup/flux/vat'))) ? (preg_replace('(\,+)', '.', $helper->getConfig('beezup/flux/vat')) / 100) + 1 : 1;
 			$_attributes 		= $helper->getConfig('beezup/flux/attributes') ? explode(',', $helper->getConfig('beezup/flux/attributes')) : array();
-			$_catalog_rules 	= $helper->getConfig('beezup/flux/catalog_rules');
+		//	$_catalog_rules 	= $helper->getConfig('beezup/flux/catalog_rules');
 			
 			$products = $beezup->getGroupedProduct();
 			
-			$buf = $helper->getConfig('beezup/flux/bom') ? "\xEF\xBB\xBF" : '';
+			$buf = "\xEF\xBB\xBF";
 			foreach ($products as $product) {
 				$associatedProducts = $product->getTypeInstance(true)->getAssociatedProducts($product);
 				
@@ -598,23 +700,23 @@
 						echo "----------------------------"						."<br/>";
 						echo "Name : "		.$g->getName()						."<br/>";
 						echo "Description : ".$parentDesc						."<br/>";
-					echo "Id : "		.$g->getId()						."<br/>";
-					echo "Parent Id : "	.$parentId							."<br/>";
-					echo "Url : "		.$parentUrl							."<br/>";
-					echo "Image : "		.$helper->getImageDir().$image 		."<br/>";
-					
-					
-					echo "SKU : "		.$g->getSku()						."<br/>";
-					echo "Quantity : " 	.$qty 								."<br/>";
-					echo "Stock : " 	.$stock 							."<br/>";
-					echo "Shipping : " 	.$shipping 							."<br/>";
-					echo "price : "		.$price 							."<br/>";
-					echo "finalprice : ".$final_price 						."<br/>";
-					echo "weight : "	.$g->getWeight() 					."<br/>";
-					
-					$i = 1;
-					foreach ($parentCategories as $v) 
-					echo "Catégorie ".$i." : ".$v."<br/>";					
+						echo "Id : "		.$g->getId()						."<br/>";
+						echo "Parent Id : "	.$parentId							."<br/>";
+						echo "Url : "		.$parentUrl							."<br/>";
+						echo "Image : "		.$helper->getImageDir().$image 		."<br/>";
+						
+						
+						echo "SKU : "		.$g->getSku()						."<br/>";
+						echo "Quantity : " 	.$qty 								."<br/>";
+						echo "Stock : " 	.$stock 							."<br/>";
+						echo "Shipping : " 	.$shipping 							."<br/>";
+						echo "price : "		.$price 							."<br/>";
+						echo "finalprice : ".$final_price 						."<br/>";
+						echo "weight : "	.$g->getWeight() 					."<br/>";
+						
+						$i = 1;
+						foreach ($parentCategories as $v) 
+						echo "Catégorie ".$i." : ".$v."<br/>";					
 					}
 					
 					
@@ -622,36 +724,45 @@
 					$buf .= $helper->tag($this->__('b_unique_id'), $g->getId());
 					$buf .= $helper->tag($this->__('b_sku'), trim($g->getSku()), 1);
 					if ($configurable){
-					$buf .= $helper->tag($this->__('parent_or_child'), 'grouped_child', 1);
-					$buf .= $helper->tag($this->__('parent_id'), $parentId);			
+						$buf .= $helper->tag($this->__('parent_or_child'), 'grouped_child', 1);
+						$buf .= $helper->tag($this->__('parent_id'), $parentId);			
 					}
 					$buf .= $helper->tag($this->__('b_title'), $g->getName()/*trim($name)*/, 1);
 					$buf .= $helper->tag($this->__('b_description'), preg_replace("/(\r\n|\n|\r)/", ' ', strip_tags($parentDesc)), 1);
 					$buf .= $helper->tag($this->__('b_product_url'), $parentUrl, 1);
 					
 					/*							
-					if($many_images==1)		{
-					
-					$gprod = Mage::getModel('catalog/product')->load( $g->getId());
-					$inc = 0;
-					foreach ($gprod->getMediaGalleryImages() as $image) {
-					$inc++;
-					if($inc==1) {
-					$buf .= $helper->tag($this->__('url_image'), $image->getUrl(), 1);
-					} else {
-					$buf .= $helper->tag($this->__('url_image')."_".$inc, $image->getUrl(), 1);
-					}
-					}
-					} else {
-					
-					$buf .= $helper->tag($this->__('url_image'), $helper->getImageDir() . $image, 1);
+						if($many_images==1)		{
+						
+						$gprod = Mage::getModel('catalog/product')->load( $g->getId());
+						$inc = 0;
+						foreach ($gprod->getMediaGalleryImages() as $image) {
+						$inc++;
+						if($inc==1) {
+						$buf .= $helper->tag($this->__('url_image'), $image->getUrl(), 1);
+						} else {
+						$buf .= $helper->tag($this->__('url_image')."_".$inc, $image->getUrl(), 1);
+						}
+						}
+						} else {
+						
+						$buf .= $helper->tag($this->__('url_image'), $helper->getImageDir() . $image, 1);
 					}*/
 					
 					$buf .= $helper->tag($this->__('b_product_image'), $helper->getImageDir() . $image, 1); //récupère l'image sur le père
 					$buf .= $helper->tag($this->__('b_availability'), $stock, 1);
 					$buf .= $helper->tag($this->__('b_qty'), $qty);
 					$buf .= $helper->tag($this->__('b_delivery'), $shipping, 1);
-					$buf .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($g->getWeight(), $_tablerates)));
+					if($shipping_logic == 1) {
+						if($shipping_rate == 0 && $default_shipping_cost > 0) {
+							$shipping_rate = $default_shipping_cost;
+						}
+						$shipping_rate = $beezup->_getShippingPrice($g, $shipping_carrier, $default_country);
+						$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($shipping_rate));
+						} else {
+						$xml .= $helper->tag($this->__('b_shipping'), $helper->currency($beezup->getShippingAmount($g->getWeight(), $_tablerates)));
+					}	
+					
 					$buf .= $helper->tag($this->__('b_weight'), $helper->currency($g->getWeight()));
 					$buf .= $helper->tag($this->__('b_price'), $helper->currency($final_price * $_vat));
 					if ($price != $final_price) $buf .= $helper->tag($this->__('b_regular_price'), $helper->currency($price*$_vat));

@@ -10,9 +10,9 @@ class BeezUp_Model_System_Config_Source_Attributes
         $attributeArray = array();
 
         foreach ($attribute as $option) {
-            if ($option->getIsUserDefined() && $option->getFrontendLabel()) {
+           // if ($option->getIsUserDefined() && $option->getFrontendLabel()) {
                 $attributeArray[] = array('value' => $option->getAttributeCode(), 'label' => $option->getAttributeCode());
-            }
+           // }
         }
 
         return $attributeArray;

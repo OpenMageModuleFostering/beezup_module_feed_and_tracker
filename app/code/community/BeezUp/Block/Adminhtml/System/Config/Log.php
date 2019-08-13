@@ -28,7 +28,14 @@ class Beezup_Block_Adminhtml_System_Config_Log extends Mage_Adminhtml_Block_Syst
 	
 	public function _getTable($data) {
 			$url = Mage::getBaseUrl( Mage_Core_Model_Store::URL_TYPE_WEB, true );
-		$html = "<td></td><td></td><tr></tr></tbody></table>
+		$html = "
+		<style>
+#beezup_flux_description {
+		    height: 110px;
+		
+}
+		</style>
+		<td></td><td></td><tr></tr></tbody></table>
 		
 		<div class='grid' style='  height: 400px;overflow-y: scroll;padding: 16px;border: 3px solid #e6e6e6;' id='marketPlaceLogBlock'>";
 		$html .= '<p>'. Mage::helper('beezup')->__('For full logs see here:').' <a href="'.$url .'beezup/log/load" target="_blank">'.$url .'beezup/log/load</a></p>';

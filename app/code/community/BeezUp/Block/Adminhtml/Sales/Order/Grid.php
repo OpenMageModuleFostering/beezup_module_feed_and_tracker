@@ -74,9 +74,9 @@ class BeezUp_Block_Adminhtml_Sales_Order_Grid extends  Mage_Adminhtml_Block_Widg
             'header' => Mage::helper('sales')->__('Ship to Name'),
             'index' => 'shipping_name',
         ));
-			  $this->addColumn('beezup_marketplace', array(
+			  $this->addColumn('beezup_marketplace_business_code', array(
             'header' =>Mage::helper('beezup')->__('Marketplace'),
-            'index' => 'beezup_marketplace',
+            'index' => 'beezup_marketplace_business_code',
         ));
 
 		

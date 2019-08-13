@@ -107,3 +107,18 @@ parent_id,parent_id
 parent_or_child,parent_or_child
 url_image,url_image
 variation-theme,variation-theme
+Shipping cost - Carrier,Shipping cost - Carrier
+Beware this option might make your feed take longer to load,Beware this option might make your feed take longer to load
+Default Shipping Carrier,Default Shipping Carrier
+Used if option 'Shipping cost - Carrier' is enabled, Used if option 'Shipping cost - Carrier' is enabled
+Default Country,Default Country
+Enable Html in descriptions,Enable Html in descriptions
+Create customer for each order,Create customer for each order
+Synchronize a specific order,Synchronize a specific order
+Separated data,Separated data
+go.beezup.com order link,go.beezup.com order link
+Account ID,Account ID
+Marketplace ID,Marketplace ID
+Order ID,Order ID
+Get Order,Get Order
+If you enable this option, customers will be created in Magento for each marketplace imported order,If you enable this option, customers will be created in Magento for each marketplace imported order

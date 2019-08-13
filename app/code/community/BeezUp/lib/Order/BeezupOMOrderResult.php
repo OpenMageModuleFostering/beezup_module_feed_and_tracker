@@ -7,6 +7,7 @@ class BeezupOMOrderResult extends BeezupOMResult {
 	protected $aLinks = array();
 	protected $aTransitionLinks = array();
 	protected $sMarketPlaceTechnicalCode = null;
+	protected $sMarketPlaceBusinessCode = null;
 	protected $aOrderItems = array();
 	protected $sOrderBuyerAddressCity = null;
 	protected $sOrderBuyerAddressCountryIsoCodeAlpha2 = null;
@@ -196,6 +197,7 @@ class BeezupOMOrderResult extends BeezupOMResult {
 		$this->aTransitionLinks[] = $oLink;
 		return $this;
 	}
+
 	/**
 	 * @return the $sMarketPlaceTechnicalCode
 	 */
@@ -210,6 +212,24 @@ class BeezupOMOrderResult extends BeezupOMResult {
 	public function setMarketPlaceTechnicalCode($sMarketPlaceTechnicalCode)
 	{
 		$this->sMarketPlaceTechnicalCode = $sMarketPlaceTechnicalCode;
+		return $this;
+
+	}
+
+	/**
+	 * @return the $sMarketPlaceBusinessCode
+	 */
+	public function getMarketPlaceBusinessCode()
+	{
+		return $this->sMarketPlaceBusinessCode;
+	}
+
+	/**
+	 * @param NULL sMarketPlaceBusinessCode
+	 */
+	public function setMarketPlaceBusinessCode($sMarketPlaceBusinessCode)
+	{
+		$this->sMarketPlaceBusinessCode = $sMarketPlaceBusinessCode;
 		return $this;
 
 	}

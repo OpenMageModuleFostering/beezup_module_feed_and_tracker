@@ -103,7 +103,7 @@ Product Price Excl. Tax or Incl. Tax in catalog,Prix produits saisis en HT ou TT
 Protects the flow by a unique key (Eg: 85ds6f7): www.yoursite.com/beezup/catalog/xml/key/85ds6f7/,"Prot&eacute;ge le flux par une cl&eacute; unique (Ex : 85ds6f7) : www.votresite.com/beezup/catalog/xml/key/85ds6f7/"
 Sales,Ventes
 Select Value...,"S&eacute;lectionner une valeur..."
-Shipping (Incl. Tax),Frais de port (TTC)
+Default Shipping Cost (with tax),Frais de port par d&eacute;faut (TTC)  
 Short Description,Description courte
 Special Fee,Coûts de gestion
 Specific Attributes,"Attributs sp&eacute;cifiques"
@@ -144,6 +144,23 @@ Resync Order, Resynchroniser cette commande
 Updated Order Ok - page will refresh in 2 sec,Commande mise &agrave; jour avec succès - rafraichissement de la page sous 2 sec
 Order has been refreshed with no change,Commande mise &agrave; jour sans changement
 Order is syncronizing, please resync within a few mins to get updated info,Commande en cours de synchro - merci d'attendre et de resynchroniser manuellement d'ici quelques minutes.
-Refresh time of the cache export file in hours,Dur&egrave;e de vie du cache en heures
-Category Logic,Logique de cat&egrave;gories
+Refresh time of the cache export file in hours,Dur&eacute;e de vie du cache en heures
+Category Logic,Logique de cat&eacute;gories
 Choose option 1 if don't know what this is,Choisissez l'option 1, si vous ne savez pas ce dont il s'agit
+Shipping cost - Carrier,Frais de port - Transporteur
+Beware this option might make your feed take longer to load,Attention cette option peut rendre votre flux plus long &agrave; charger
+Default Shipping Carrier,Transporteur par d&eacute;faut
+Used if option "Shipping cost - Carrier" is enabled, Utilis&eacute; si option &quot;Frais de port - Transporteur&quot; actif
+Default Country,Pays par d&eacute;faut
+Enable Html in descriptions,Activer l'HTML dans les descriptions
+Create customer for each order,Cr&eacute;ation du client &agrave; chaque commande
+Synchronize a specific order,Synchroniser une commande pr&eacute;cise
+Separated data,Infos s&eacute;par&eacute;es
+go.beezup.com order link,Lien commande go.beezup.com
+Account ID,Id compte
+Marketplace ID,Id Place de march&eacute;
+Order ID,Id de la commande
+Get Order,R&eacute;cup&eacute;rer commande
+If you enable this option customers will be created in Magento for each marketplace imported order,Si cette option est active les clients sont cr&eacute;&eacute;s dans Magento pour chaque commande place de march&eacute; import&eacute;e
+Shipping Cost (if no value found), Frais de port (si aucune valeur trouv&eacute;e)
+Choice of exported products,Choix des produits export&eacute;s

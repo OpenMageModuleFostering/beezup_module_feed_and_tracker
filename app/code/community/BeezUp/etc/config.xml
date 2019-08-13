@@ -2,7 +2,7 @@
 <config>
     <modules>
         <BeezUp>
-            <version>4.5.0</version>
+            <version>4.6.0</version>
         </BeezUp>
     </modules>
     <global>
@@ -164,14 +164,13 @@
                 <active>0</active>
                 <debug_flux>1</debug_flux>
                 <ht>1</ht>
-                <vat>19.6</vat>
-                <tablerates_weight_destination>0</tablerates_weight_destination>
+                <vat>20</vat>
                 <days_in>1-2</days_in>
                 <days_out>6-8</days_out>
-                <description>short_description</description>
-                <catalog_rules>0</catalog_rules>
-                <bom>1</bom>
+                <description>description</description>
 				<cachedelay>2</cachedelay>
+				<visiblity>7</visiblity>
+				<category_logic>1</category_logic>
                 <ship></ship>
                 <key></key>
                 <ip></ip>
