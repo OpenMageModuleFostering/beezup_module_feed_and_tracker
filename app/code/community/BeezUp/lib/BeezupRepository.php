@@ -312,6 +312,16 @@ class BeezupRepository implements BeezupOMRepositoryInterface {
 	}
 	
 	
-	
+			
+		public function getLOVValuesForParams(BeezupOMLink $oLink, $bRequired = true){
+			$aResult = array();
+			foreach ($oLink->getParameters() as $oParam){
+				if ($oParam->getLovLink() && (!$bRequired || $oParam->isLovRequired())) {
+					$oLovResult = $this->getLOVByLink($oParam->getLovLink());
+					$aResult[$oParam->getName()] = $oLovResult ? $oLovResult->toArray() : array();
+				} // if
+			} // foreach
+			return $aResult;
+		}
 	
 }

@@ -441,13 +441,15 @@
 				foreach ($oLink->getParameters() as $oParam){
 					$sName = $oParam->getName();
 					if ((!isset($aData[$sName]) || empty($aData[$sName]) && $oParam->isMandatory())){
-						throw new Exception(sprintf('Param %s cannot be empty',$sName));
+						die(sprintf('Param %s cannot be empty',$sName));
 					}
 					if (!$this->validateParam($oParam, $aData[$sName])){
-						throw new Exception(sprintf('Param %s cannot be empty has invalid value %s', $sName,  strval($aData[$sName])));
+						die(sprintf('Param %s cannot be empty has invalid value %s', $sName,  strval($aData[$sName])));
 					}
 					if ($oParam->getCSharpType() === 'System.DateTime'){
-						$aResult[$sName] = substr($aData[$sName],0,10) . 'T' . gmdate('H:i:s', time()-300) . '.000Z';
+						$formatDate = date("Y-m-d", strtotime($aData[$sName]));
+						$aResult[$sName] = substr($formatDate,0,10) . 'T' . gmdate('H:i:s', time()-300) . '.000Z';
+					//	echo $aResult[$sName]."<br>";
 					} else {
 						$aResult[$sName] = $aData[$sName];
 					}

@@ -2,7 +2,7 @@
 <config>
     <modules>
         <BeezUp>
-            <version>4.1.0</version>
+            <version>4.2.0</version>
         </BeezUp>
     </modules>
     <global>
@@ -30,10 +30,10 @@
 		
 			<adminhtml>
 				<rewrite>
-					<sales_order_grid>BeezUp_Block_Adminhtml_Sales_Order_Grid</sales_order_grid>
+				
 					  <sales_order_totals>BeezUp_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
             <sales_order_invoice_totals>BeezUp_Block_Adminhtml_Sales_Order_Invoice_Totals</sales_order_invoice_totals>
-            <sales_order_creditmemo_totals>BeezUp_Block_Adminhtml_Sales_Order_Creditmemo_Totals</sales_order_creditmemo_totals>
+
 
 					
 				</rewrite>
@@ -176,6 +176,7 @@
                 <key></key>
                 <ip></ip>
 				<images></images>
+				
             </flux>
         </beezup>
     </default>

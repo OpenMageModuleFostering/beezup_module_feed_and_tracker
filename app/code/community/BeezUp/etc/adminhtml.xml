@@ -1,60 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
     <menu>
-      		<sales translate="title" module="beezup">
-			<title>Sales</title>
-			<sort_order>20</sort_order>
-			<depends>
-				<module>Mage_Sales</module>
-			</depends>
-			<children>
-				<order translate="title" module="beezup">
-					<title>Orders</title>
-					<action>adminhtml/sales_order</action>
-					<sort_order>10</sort_order>
-					<children>
-						<order_default>
-							<title>Orders</title>
-							<action>adminhtml/sales_order</action>
-							<sort_order>10</sort_order>
-						</order_default>
-						<order_a>
-							<title>BeezUP Orders</title>
-							<action>adminhtml/sales_order/index/prepared/beezup</action>
-							<sort_order>20</sort_order>
-						</order_a>
-
-					</children>
-				</order>
-			</children>
-			</sales>
+        <sales>
+            <children>
+                <BeezUp translate="title" module="beezup">
+                    <sort_order>10</sort_order>
+                    <title>BeezUP Orders</title>
+                    <action>adminhtml/order/</action>
+                </BeezUp>
+            </children>
+        </sales>
     </menu>
-    <acl>
-     <resources>
-			<admin>
-				<children>
-					<sales translate="title" module="beezup">
-						<title>Sales</title>
-						<children>
-							<order translate="title" module="beezup">
-								<title>Orders</title>
-								<sort_order>10</sort_order>
-								<children>
-									<order_default>
-										<title>OOrders</title>
-										<sort_order>10</sort_order>
-									</order_default>
-									<order_a>
-										<title>Beezup Orders</title>
-										<sort_order>20</sort_order>
-									</order_a>
-	
-								</children>
-							</order>
-						</children>
-					</sales>
-				</children>
-			</admin>
-		</resources>
-    </acl>
 </config>

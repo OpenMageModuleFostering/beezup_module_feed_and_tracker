@@ -31,7 +31,7 @@ BeezUP Last Modification Date:,Derniere Date de modification BeezUP
 Beezup Order,Commande BeezUP
 BeezUP Order Id:,BeezUP Order ID:
 BeezUP Order Link:,Lien vers commande BeezUP
-Beezup Orders,Commandes BeezUP
+BeezUP Orders,Commandes BeezUP
 BeezUP Purchase Date: ,Date d'achat:
 BeezUP Server IP address,Adresse IP du serveur BeezUP
 BeezUP Status:,Statut BeezUP:
@@ -93,7 +93,6 @@ Not Syncing,No Sync
 OK,OK
 Only for CSV file,Uniquement pour le fichier CSV
 Only this IP address will be able to read the flow (leave empty to disable the restriction),"Seule cette adresse IP sera en mesure de lire le flux (laisser vide pour d&eacute;sactiver la restriction)"
-Orders,Commandes BeezUP
 Out of Stock,Hors stock
 Out of stock products,Produits hors stock
 parent_id,parent_id
@@ -131,3 +130,20 @@ You are viewing Beezup sales order grid.,You are viewing Beezup sales order grid
 You are viewing default sales order grid.,You are viewing default sales order grid.
 Create products if not matched - should always be disabled in production shop, Permet la cr&eacute;ation des produits si aucune correspondance n'est trouv&eacute;e - doit toujours &ecirc;tre inactif sur les sites en production
 For full logs see here:, Pour des logs complets voir ici:
+Order update well executed and is currently resyncing,Demande de changement de statut execut&eacute;e avec succ&egrave;s - resynchro en cours
+Unable to load BeezUP order,Impossible de charger la commande BeezUP
+Invalid order id,Id de commande invalide
+No action id,Pas d'action ID
+Invalid action,Action invalide
+Unable to update,Impossible de mettre &agrave; jour
+BeezUP Order Status,Statut de commande BeezUP
+Order is syncronizing - please resync within a few mins to get updated info,Commande en cours de synchro - merci d'attendre et de resynchroniser manuellement d'ici quelques minutes.
+Update,Mise &agrave; jour
+Update Order Status, Mise &agrave; jour de commande
+Resync Order, Resynchroniser cette commande
+Updated Order Ok - page will refresh in 2 sec,Commande mise &agrave; jour avec succès - rafraichissement de la page sous 2 sec
+Order has been refreshed with no change,Commande mise &agrave; jour sans changement
+Order is syncronizing, please resync within a few mins to get updated info,Commande en cours de synchro - merci d'attendre et de resynchroniser manuellement d'ici quelques minutes.
+Refresh time of the cache export file in hours,Dur&egrave;e de vie du cache en heures
+Category Logic,Logique de cat&egrave;gories
+Choose option 1 if don't know what this is,Choisissez l'option 1, si vous ne savez pas ce dont il s'agit
