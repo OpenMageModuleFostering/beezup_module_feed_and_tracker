@@ -182,7 +182,7 @@ private function updateInfoTab($result, $table) {
 		}
 		if($this->data['billing_city'] != $result['city']) {
 		$blndentro = true;		
-			$query .= " city = {$this->escape($this->data['billing_city']) }',";
+			$query .= " city = {$this->escape($this->data['billing_city']) },";
 		}
 		if($this->data['billing_telephone'] != $result['telephone']) {
 		$blndentro = true;		
