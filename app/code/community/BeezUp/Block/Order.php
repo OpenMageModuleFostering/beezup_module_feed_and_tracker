@@ -353,7 +353,8 @@ class Beezup_Block_Order extends Mage_core_block_text {
 						"order_region" => $order_region,
 						"marketplace" => $marketplace,
 						"discounts" => $mage_productIds['discounts'],
-						"marketplace_business_code" => $marketplace_business_code
+						"marketplace_business_code" => $marketplace_business_code,
+						"marketChannel" => $marketChannel
 						);
 
 
@@ -1069,6 +1070,11 @@ class Beezup_Block_Order extends Mage_core_block_text {
 					if(empty($tot_comm  ) ||  $tot_comm == 0) {
 						$beezup_comission = 0;
 					}
+
+					if($data['marketChannel'] == "AFN") {
+	            $marketplace = $marketplace." - FBA";
+	        }
+
 					$query = "UPDATE {$table} SET beezup_marketplace = '{$marketplace}',   beezup_name = '{$beezup_account_id}', beezup_order = 1, beezup_market_order_id = '{$market_order_id}',
 					beezup_order_id = '{$beezup_order_id}', beezup_status = '{$beezup_status}', beezup_last_modification_date = '{$beezup_last_modification_date}',
 					beezup_marketplace_status = '{$beezup_marketplace_status}', beezup_purchase_date = '{$beezup_purchase_date}', beezup_marketplace_last_modification_date = '{$beezup_marketplace_last_modification_date}',

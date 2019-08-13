@@ -4,7 +4,7 @@
 	class BeezUp_Block_Xml extends Mage_Core_Block_Text
 	{
 		/**
-			Xml permet de récupérer tous les produits simples
+			Xml permet de rï¿½cupï¿½rer tous les produits simples
 		**/
 		public function getXml($paginate = false)
 		{
@@ -31,7 +31,15 @@
 			$_tablerates =0;
 			$cat_logic = false;
 			if($category_logic == 1) {
-				$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
+				//$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
+				$categories = Mage::getModel('catalog/category')->getCollection()
+				->addAttributeToSelect('*')
+				->addAttributeToSort('path', 'asc')
+					->load()
+					->toArray();
+
+					$_categories = $beezup->getCategoryLogic1Tree($categories);
+
 				} else {
 				$cat_logic = true;
 				$categories = Mage::getModel('catalog/category')->getCollection()
@@ -69,7 +77,7 @@
 					$shipping = $beezup->getDelivery($qty);
 					$price = $p->getPrice();
 					$final_price = $p->getFinalPrice();
-					if (($image = $p->getImage()) == "no_selection" || ($image = $p->getImage()) == "") // Si on ne trouve pas d'image avec getImage on récupère la smallImage
+					if (($image = $p->getImage()) == "no_selection" || ($image = $p->getImage()) == "") // Si on ne trouve pas d'image avec getImage on rï¿½cupï¿½re la smallImage
 					$image = $p->getSmallImage();
 
 
@@ -166,7 +174,7 @@
 		}
 
 		/**
-			Configurable permet de récupérer tous les produits (père, enfant et simple)
+			Configurable permet de rï¿½cupï¿½rer tous les produits (pï¿½re, enfant et simple)
 		**/
 		public function getXmlConfigurable($paginate = false)
 		{
@@ -190,7 +198,13 @@
 			$_tablerates 		=  0;
 			$cat_logic = false;
 			if($category_logic == 1) {
-				$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
+				//$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
+				$categories = Mage::getModel('catalog/category')->getCollection()
+				->addAttributeToSelect('*')
+				->addAttributeToSort('path', 'asc')
+					->load()
+					->toArray();
+					$_categories = $beezup->getCategoryLogic1Tree($categories);
 				} else {
 				$cat_logic = true;
 				$categories = Mage::getModel('catalog/category')->getCollection()
@@ -208,7 +222,7 @@
 			$xml =  "\xEF\xBB\xBF";
 			$xml .= '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL . '<catalog>' . PHP_EOL;
 
-			//récupére tous les produits
+			//rï¿½cupï¿½re tous les produits
 			$products = $beezup->getProducts(false, $paginate);
 			$childs = $beezup->getConfigurableProducts(true);
 			$backendModel = $products->getResource()->getAttribute('media_gallery')->getBackend();
@@ -237,7 +251,7 @@
 				//we get product object from catalog/product reason(beezup/products gets products from catalog/product_collection, didn't find the way to get image collection from there *will check)
 
 				if (count($categories)) {
-					//si l'élément est un père, on va traiter ces enfants
+					//si l'ï¿½lï¿½ment est un pï¿½re, on va traiter ces enfants
 					if(isset($childs[$p->getId()])) {
 						$childrens = $childs[$p->getId()];
 
@@ -354,11 +368,11 @@
 						$shipping = $beezup->getDelivery($qty);
 						$price = $p->getPrice();
 						$final_price = $p->getFinalPrice();
-						if (($image = $p->getImage()) == "no_selection" || ($image = $p->getImage()) == "") // Si on ne trouve pas d'image avec getImage on récupère la smallImage
+						if (($image = $p->getImage()) == "no_selection" || ($image = $p->getImage()) == "") // Si on ne trouve pas d'image avec getImage on rï¿½cupï¿½re la smallImage
 						$image = $p->getSmallImage();
 
 
-						// si c'est un élément parent
+						// si c'est un ï¿½lï¿½ment parent
 						$xml .= '<product>';
 						$xml .= $helper->tag($this->__('b_unique_id'), $p->getId());
 						$xml .= $helper->tag($this->__('b_sku'), trim($p->getSku()), 1);
@@ -442,7 +456,7 @@
 						$shipping = $beezup->getDelivery($qty);
 						$price = $p->getPrice();
 						$final_price = $p->getFinalPrice();
-						if (($image = $p->getImage()) == "no_selection" || ($image = $p->getImage()) == "") // Si on ne trouve pas d'image avec getImage on récupère la smallImage
+						if (($image = $p->getImage()) == "no_selection" || ($image = $p->getImage()) == "") // Si on ne trouve pas d'image avec getImage on rï¿½cupï¿½re la smallImage
 						$image = $p->getSmallImage();
 
 
@@ -524,7 +538,7 @@
 
 
 		/**
-			Children permet de récupérer tous les produits enfants
+			Children permet de rï¿½cupï¿½rer tous les produits enfants
 		**/
 		public function getXmlChild($paginate = false)
 		{
@@ -547,7 +561,13 @@
 			$_tablerates =  0;
 			$cat_logic = false;
 			if($category_logic == 1) {
-				$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
+				//$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
+				$categories = Mage::getModel('catalog/category')->getCollection()
+				->addAttributeToSelect('*')
+				->addAttributeToSort('path', 'asc')
+					->load()
+					->toArray();
+					$_categories = $beezup->getCategoryLogic1Tree($categories);
 				} else {
 				$cat_logic = true;
 				$categories = Mage::getModel('catalog/category')->getCollection()
@@ -569,7 +589,7 @@
 
 			foreach ($childs as $c) {
 
-				//récupérer l'image sur le père
+				//rï¿½cupï¿½rer l'image sur le pï¿½re
 				$productParentIds=Mage::getResourceSingleton('catalog/product_type_configurable')->getParentIdsByChild($c->getId());
 				foreach($productParentIds as $productParentId){
 					$productParent = Mage::getModel('catalog/product')->load($productParentId);
@@ -609,7 +629,7 @@
 					$xml .= $helper->tag($this->__('b_product_url'), $url, 1);
 
 
-					$xml .= $helper->tag($this->__('url_image'), $helper->getImageDir() . $image, 1); //récupère l'image sur le père
+					$xml .= $helper->tag($this->__('url_image'), $helper->getImageDir() . $image, 1); //rï¿½cupï¿½re l'image sur le pï¿½re
 
 					if($many_images == 1) {
 						$product = Mage::getModel('catalog/product')->load( $c->getId());
@@ -684,8 +704,13 @@
 			$_tablerates 		=  0;
 			$cat_logic = false;
 
-			$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
-
+			//$_categories = $beezup->getCategoriesAsArray(Mage::helper('catalog/category')->getStoreCategories());
+			$categories = Mage::getModel('catalog/category')->getCollection()
+			->addAttributeToSelect('*')
+			->addAttributeToSort('path', 'asc')
+				->load()
+				->toArray();
+				$_categories = $beezup->getCategoryLogic1Tree($categories);
 
 			$_vat 				= ($_ht && is_numeric($helper->getConfig('beezup/flux/vat'))) ? (preg_replace('(\,+)', '.', $helper->getConfig('beezup/flux/vat')) / 100) + 1 : 1;
 			$_attributes 		= $helper->getConfig('beezup/flux/attributes') ? explode(',', $helper->getConfig('beezup/flux/attributes')) : array();
@@ -714,7 +739,7 @@
 					$image 				= $this->fillImageUrl($product, $g);
 
 
-					//if (($image = $g->getImage()) == "no_selection" || ($image = $g->getImage()) == "") // Si on ne trouve pas d'image avec getImage on récupère la smallImage
+					//if (($image = $g->getImage()) == "no_selection" || ($image = $g->getImage()) == "") // Si on ne trouve pas d'image avec getImage on rï¿½cupï¿½re la smallImage
 					//	$image = $g->getSmallImage();
 
 
@@ -740,7 +765,7 @@
 
 						$i = 1;
 						foreach ($parentCategories as $v)
-						echo "Catégorie ".$i." : ".$v."<br/>";
+						echo "Catï¿½gorie ".$i." : ".$v."<br/>";
 					}
 
 
@@ -764,7 +789,7 @@
 
 
 					$buf .= $helper->tag($this->__('b_product_url'), $parentUrl, 1);
-					$buf .= $helper->tag($this->__('b_product_image'), $helper->getImageDir() . $image, 1); //récupère l'image sur le père
+					$buf .= $helper->tag($this->__('b_product_image'), $helper->getImageDir() . $image, 1); //rï¿½cupï¿½re l'image sur le pï¿½re
 
 
 
@@ -800,7 +825,7 @@
 		protected function fillImageUrl($p, $c)
 		{
 			$image 			= $c->getImage();
-			if ($image == "no_selection" || $image == "") // Si on ne trouve pas d'image avec getImage on récupère la smallImage
+			if ($image == "no_selection" || $image == "") // Si on ne trouve pas d'image avec getImage on rï¿½cupï¿½re la smallImage
 			{
 				$image = $c->getSmallImage();
 				if ($image == "no_selection" || $image == "")
@@ -845,9 +870,9 @@
 		protected function createFolder()
 		{
 			$helper = Mage::helper('beezup');
-			if (!$helper->getConfig('beezup/flux/cachedelay')) // Si option cache desactivée, pas besoin du dossier
+			if (!$helper->getConfig('beezup/flux/cachedelay')) // Si option cache desactivï¿½e, pas besoin du dossier
 		return (true);
-		if (file_exists('beezup/tmp')) // Si le dossier existe deja, pas besoin de le recréer
+		if (file_exists('beezup/tmp')) // Si le dossier existe deja, pas besoin de le recrï¿½er
 		return (true);
 		if (!mkdir('beezup/tmp', 0777, true))
 		{
@@ -879,7 +904,7 @@
 		$this->getAssociatedProducto(true);
 		return;*/
 		$paginate = $this->getPagination();
-		if (!$this->createFolder()) // Si on rencontre des problèmes de création de dossier on retourne rien
+		if (!$this->createFolder()) // Si on rencontre des problï¿½mes de crï¿½ation de dossier on retourne rien
 		return;
 		if ($this->getConfigurable()){ // Appel de l'url http://site.com/beezup/catalog/configurable
 		if ($this->needRefreshing('configurable_'.$storeId.'_'.$websiteId)){

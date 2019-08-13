@@ -1,8 +1,8 @@
 <?php
-	
+
 	class BeezUp_Model_Products extends Mage_Core_Model_Abstract
 	{
-		
+
 		/*
 			* Retrieve products collection
 			*
@@ -29,7 +29,7 @@
 			->addAttributeToSelect("meta_title")
 			->addAttributeToSelect("meta_keyword")
 			->addStoreFilter();
-			
+
 			$visibility = Mage::getStoreConfig('beezup/flux/visibility');
 			switch($visibility) {
 				case 1:
@@ -53,29 +53,29 @@
 				$products->addAttributeToFilter('visibility', array('in' => array(Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG, Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)));
 				break;
 			}
-			
+
 			if($configurable) $products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE);
-			
+
 			if(Mage::getStoreConfig('beezup/flux/stock')){
 				Mage::getSingleton('cataloginventory/stock')->addInStockFilterToCollection($products);
 				//$products=	$products->joinField('inventory_in_stock', 'cataloginventory_stock_item', 'is_in_stock', 'product_id=entity_id','is_in_stock>=0', 'left')
 				//->addAttributeToFilter('inventory_in_stock', array('neq' => 0));
 			}
-			
+
 			$attributes = explode(',', Mage::getStoreConfig('beezup/flux/attributes'));
 			foreach ($attributes as $a) $products->addAttributeToSelect($a);
-			
+
 			if (Mage::getStoreConfig('beezup/flux/debug_flux')) $products->setPageSize(10);
-			
+
 			if($pagination) {
-				
+
 				$products->setPageSize((int)$pagination['limit'])->setCurPage((int)$pagination['page']);
-				
+
 			}
-			
+
 			return $products;
 		}
-		
+
 		public function getGroupedProduct()
 		{
 			$products = Mage::getModel('catalog/product')
@@ -88,10 +88,10 @@
 			->addAttributeToSelect('small_image')
             ->addAttributeToSelect('image')
             ->addAttributeToFilter('type_id', array('eq' => 'grouped'));
-			
+
 			return $products;
 		}
-		
+
 		public function getProductsSimple($pagination= false)
 		{
 			$products = Mage::getResourceModel('catalog/product_collection')
@@ -112,7 +112,7 @@
 			->addAttributeToSelect("meta_title")
 			->addAttributeToSelect("meta_keyword")
 			->addStoreFilter();
-			
+
 			$visibility = Mage::getStoreConfig('beezup/flux/visibility');
 			switch($visibility) {
 				case 1:
@@ -136,29 +136,29 @@
 			$products->addAttributeToFilter('visibility', array('in' => array(Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG, Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)));
 			break;
 			}
-			
-			
-			$products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);		
-			
+
+
+			$products->addAttributeToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);
+
 			if(Mage::getStoreConfig('beezup/flux/stock')){
 			Mage::getSingleton('cataloginventory/stock')->addInStockFilterToCollection($products);
 			//$products=	$products->joinField('inventory_in_stock', 'cataloginventory_stock_item', 'is_in_stock', 'product_id=entity_id','is_in_stock>=0', 'left')
 			//->addAttributeToFilter('inventory_in_stock', array('neq' => 0));
 			}
-			
+
 			$attributes = explode(',', Mage::getStoreConfig('beezup/flux/attributes'));
 			foreach ($attributes as $a) $products->addAttributeToSelect($a);
-			
+
 			if (Mage::getStoreConfig('beezup/flux/debug_flux')) $products->setPageSize(10);
-			
+
 			if($pagination) {
 			$products->setPageSize($pagination['limit'])->setCurPage($pagination['page']);
-			
+
 			}
-			
+
 			return $products;
 			}
-			
+
 			/*
 			* Retrieve configurable products collection
 			*
@@ -183,59 +183,59 @@
 			->addAttributeToSelect("meta_title")
 			->addAttributeToSelect("meta_keyword")
 			->addStoreFilter();
-			
+
 			if(Mage::getStoreConfig('beezup/flux/stock')){
 			Mage::getSingleton('cataloginventory/stock')->addInStockFilterToCollection($products);
 			//$products=	$products->joinField('inventory_in_stock', 'cataloginventory_stock_item', 'is_in_stock', 'product_id=entity_id','is_in_stock>=0', 'left')
 			//->addAttributeToFilter('inventory_in_stock', array('neq' => 0));
 			}
-			
+
 			$attributes = explode(',', Mage::getStoreConfig('beezup/flux/attributes'));
 			foreach ($attributes as $a) $products->addAttributeToSelect($a);
-			
+
 			if($pagination) {
 			$products->setPageSize($pagination['limit'])->setCurPage($pagination['page']);
 			}
-			
+
 			$productsArray = $products;
-			
-			//si on est dans le cas où on veut les pères et les fils
+
+			//si on est dans le cas oï¿½ on veut les pï¿½res et les fils
 			if($config){
 			$productsArray = array();
-			
+
 			foreach($products as $p) {
 			$productsArray[$p->getParentId()][] = $p;
 			}
 			}
-			
+
 			return $productsArray;
 			}
-			
-			
+
+
 			/*
 			* Collect options applicable to the configurable product for Varation Theme
 			*
 			* @param Mage_Catalog_Model_Product $product
 			* @return String
 			*/
-			
+
 			public function getOptions($product) {
 			$childs = $this->getConfigurableProducts();
-			
+
 			//si c'est un parent
 			if(isset($childs[$product->getId()])) {
 			$productAttributeOptions = $product->getTypeInstance(true)->getConfigurableAttributesAsArray($product);
-			
+
 			$attributeOptions = array();
-			
+
 			foreach ($productAttributeOptions as $productAttribute) {
 			$attributeOptions[] = ucfirst($productAttribute['attribute_code']);
 			}
-			
+
 			return implode('',$attributeOptions);
 			}
 			}
-			
+
 			/*
 			* Retrieve products stock
 			*
@@ -256,7 +256,7 @@
 			}
 			return $qty;
 			}
-			
+
 			/*
 			* Retrieve product shipping amount
 			*
@@ -267,7 +267,7 @@
 			public function getShippingAmount($weight, $tablerates)
 			{
 			$shipping_amount = 0;
-			
+
 			if ($tablerates && $tablerates instanceof Mage_Shipping_Model_Mysql4_Carrier_Tablerate_Collection) {
 			foreach ($tablerates as $t) {
 			if ($weight <= $t->getConditionValue()) $shipping_amount = $t->getPrice();
@@ -278,7 +278,7 @@
 			}
 			return $shipping_amount;
 			}
-			
+
 			/*
 			* Retrieve Tablerates
 			*
@@ -288,7 +288,7 @@
 			{
 			return Mage::getResourceModel('shipping/carrier_tablerate_collection')->setOrder('condition_value', 'desc');
 			}
-			
+
 			/*
 			* Retrieve product is in stock
 			*
@@ -299,7 +299,7 @@
 			{
 			return ($qty > 0) ? Mage::helper('beezup')->__('In Stock') : Mage::helper('beezup')->__('Out of Stock');
 			}
-			
+
 			/*
 			* Retrieve product delivery
 			*
@@ -310,7 +310,37 @@
 			{
 			return ($qty > 0) ? Mage::getStoreConfig('beezup/flux/days_in') : Mage::getStoreConfig('beezup/flux/days_out');
 			}
-			
+
+
+
+
+
+						public function getCategoryLogic1Tree($categories) {
+
+							$categorias = array();
+							if(isset($categories['items'])) {
+								$categories = $categories['items'];
+							}
+							foreach($categories as $category) {
+								$categorias[$category['entity_id']] = $category;
+							}
+							$retorno = array();
+							foreach($categorias as $key => $category) {
+								$paths = explode("/", $category['path']);
+								$categoryTree = array();
+								foreach($paths as $path) {
+									if(isset($categorias[$path])) {
+										if($categorias[$path]['entity_id'] > 2) {
+											$categoryTree[] = $categorias[$path]['name'];
+										}
+									}
+								}
+								$retorno[$key] = implode("||", $categoryTree);
+							}
+
+							return $retorno;
+						}
+
 			/*
 			* Retrieve store categories as array (recursive)
 			*
@@ -327,31 +357,31 @@
 			$tl_name = '';
 			$_categories = $categories;
 			foreach($_categories as $_category){
-			
+
 			if($i==0 ) {
 			$par_cat = Mage::getModel('catalog/category')->load($_category->getId())->getParentCategory();
-			
+
 			$cats[$par_cat->getId()] =	array("name" => $tl_name.$par_cat->getName(), "id" => $par_cat->getId(), "parent" => $par_cat->getParentId());
 			}
-			
-			
+
+
 			//$_category = Mage::getModel('catalog/category')->load($_category->getId());
 			$cats[$_category->getId()] = array("name" => $tl_name.$_category->getName(), "id" => $_category->getId(), "parent" => $_category->getParentId() ); //Toplevel auslesen
 			$i++;
 			$_category = Mage::getModel('catalog/category')->load($_category->getId());
 			$subcats = $this->getChildCategories($_category);
-			
+
 			foreach($subcats as $c) {
-			
+
 			$cats[$c['id']] = array("name" => $tl_name.$c['name'], "id" => $c['id'] , "parent" => $c['parent']);
-			} 
+			}
 			}
 			return $cats;
-			
+
 			} else {
 			foreach ($categories as $c) {
 			$cats[$c['entity_id']] = $parent . $c['name'];
-			
+
 			if (!Mage::helper('catalog/category_flat')->isEnabled()) {
 			if ($childs = $c->getChildren()) {
 			$this->getCategoriesAsArray($childs, $logic, $parent . $c['name'] . '||', $cats);
@@ -365,8 +395,8 @@
 			}
 			return $cats;
 			}
-			
-			
+
+
 			public $_catIds = array();
 			public function getChildCategories($categoryObject){
 			$categories = $categoryObject->getChildrenCategories();
@@ -378,7 +408,7 @@
 			}
 			return $this->_catIds;
 			}
-			
+
 			/*
 			* Retrieve product categories
 			*
@@ -388,26 +418,27 @@
 			*/
 			public function getProductsCategories($product,$categories)
 			{
-			
-			
+
+
 			$_categories = $product->getCategoryIds();
-			
+
 			sort($_categories);
 			$result = array();
 			if(count($_categories)) {
 			$_count = 0;
 			foreach($_categories as $c) {
 			if(isset($categories[$c])) {
-			if(count(explode('||',$categories[$c])) > $_count) $result = explode('||',$categories[$c]);
+				$result = explode('||',$categories[$c]);
+			//if(count(explode('||',$categories[$c])) > $_count) $result = explode('||',$categories[$c]);
 			$_count = count($result);
 			}
 			}
 			}
-			
+
 			return $result;
 			}
-			
-			
+
+
 			/*
 			* Retrieve product categories
 			*
@@ -423,17 +454,17 @@
 			$parent_id = 0;
 			$i = 0;
 			sort($_categories);
-			
+
 			if(count($_categories)) {
 			$_count = 0;
 			foreach($_categories as $c) {
 			if(isset($categories[$c])) {
 			if( $parent_id ==  $categories[$c]['parent'] || $i <= 1) {
 			$result[] = $categories[$c]['name'];
-			
-			
+
+
 			$parent_id = $categories[$c]['id'];
-			
+
 			}
 			$i++;
 			//   if(count(explode('||',$categories[$c])) > $_count) $result = explode('||',$categories[$c]);
@@ -443,8 +474,8 @@
 			}
 			return $result;
 			}
-			
-			
+
+
 			/*
 			* Retrieve current store
 			*
@@ -454,18 +485,18 @@
 			{
 			return Mage::app()->getStore();
 			}
-			
-			
-			
-			
-			
+
+
+
+
+
 			/**
 			* Get shipping price
 			*
 			* @param Mage_Catalog_Model_Product    $product_instance
 			* @param string                        $carrierValue
-			* @param string                        $countryCode 
-			*  
+			* @param string                        $countryCode
+			*
 			* @return mixed
 			*/
 			public function _getShippingPrice($product_instance, $carrierValue, $countryCode = 'FR')
@@ -490,13 +521,13 @@
 			}
 			return 0;
 			}
-			
+
 			/**
 			* Get Shipping rate request
 			*
 			* @param Mage_Catalog_Model_Product    $product_instance
-			* @param string                        $countryCode 
-			*  
+			* @param string                        $countryCode
+			*
 			* @return Mage_Shipping_Model_Rate_Request
 			*/
 			protected function _getShippingRateRequest($product_instance, $countryCode = 'FR')
@@ -530,6 +561,6 @@
 			$request->setPackageCurrency(Mage::app()->getStore()->getCurrentCurrency());
 			return $request;
 			}
-			
-			
-			}																																								
+
+
+			}
