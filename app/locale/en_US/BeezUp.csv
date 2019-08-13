@@ -1,0 +1,109 @@
+"--Please Select--","--Please Select--"
+"1 hour","1 hour"
+"12 hours","12 hours"
+"2 hours","2 hours"
+"24 hours","24 hours"
+"30 minutes","30 minutes"
+"4 hours","4 hours"
+"8 hours","8 hours"
+"API BeezUP Connection status:","API BeezUP Connection status:"
+"Add New Attribute","Add New Attribute"
+"Allow creating orders with non available products","Allow creating orders with non available products"
+BeezUP,BeezUP
+"BeezUP Info","BeezUP Info"
+"BeezUP Last Modification Date:","BeezUP Last Modification Date:"
+"BeezUP Order Id:","BeezUP Order Id:"
+"BeezUP Order Link:","BeezUP Order Link:"
+"BeezUP Purchase Date: ","BeezUP Purchase Date: "
+"BeezUP Server IP address","BeezUP Server IP address"
+"BeezUP Status:","BeezUP Status:"
+"BeezUP Total Commission:","BeezUP Total Commission:"
+"BeezUP Total Paid: ","BeezUP Total Paid: "
+"Beezup Info","Beezup Info"
+"Beezup Order","Beezup Order"
+"Beezup Orders","Beezup Orders"
+"Before body end","Before body end"
+Bom,Bom
+"Cache delay","Cache delay"
+"Calculate product margin","Calculate product margin"
+"Catalog Flow","Catalog Flow"
+"Catalog Price","Catalog Price"
+Change,Change
+"Cron Call","Cron Call"
+"Debug Mode","Debug Mode"
+"Default payment ","Default payment "
+"Delivery Time if Product in Stock","Delivery Time if Product in Stock"
+"Delivery Time if Product out of Stock","Delivery Time if Product out of Stock"
+Description,Description
+Disable,Disable
+Enable,Enable
+Enabled,Enabled
+"Excl. Tax","Excl. Tax"
+"Excl. Tax - with shipping costs","Excl. Tax - with shipping costs"
+"Excl. Tax - without shipping costs","Excl. Tax - without shipping costs"
+"Export all available pictures","Export all available pictures"
+"Filter out of stock products","Filter out of stock products"
+Head,Head
+"In Stock","In Stock"
+"Incl. Tax","Incl. Tax"
+"Incl. Tax - with shipping costs","Incl. Tax - with shipping costs"
+"Incl. Tax - without shipping costs","Incl. Tax - without shipping costs"
+Key,Key
+"Last synchronization time :","Last synchronization time :"
+Logs,Logs
+"Manual orders retrieval link:","Manual orders retrieval link:"
+Marketplace,Marketplace
+"Marketplace Last Modification Date:","Marketplace Last Modification Date:"
+"Marketplace Order Id","Marketplace Order Id"
+"Marketplace Order Id:","Marketplace Order Id:"
+"Marketplace Status:","Marketplace Status:"
+Marketplace:,Marketplace:
+"Meta Description","Meta Description"
+"NOT OK","NOT OK"
+No,No
+"No data here, since it\'s not an order coming from BeezUP","No data here, since it\'s not an order coming from BeezUP"
+None,None
+"Not Syncing","Not Syncing"
+OK,OK
+Orders,Orders
+"Out of Stock","Out of Stock"
+"Product description","Product description"
+Sales,Sales
+"Select Value...","Select Value..."
+"Shipping (Incl. Tax)","Shipping (Incl. Tax)"
+"Short Description","Short Description"
+"Special Fee","Special Fee"
+"Specific Attributes","Specific Attributes"
+"Store ID","Store ID"
+"Sync Status:","Sync Status:"
+Syncing,Syncing
+"Table Rates","Table Rates"
+"Total orders amount","Total orders amount"
+Tracking,Tracking
+"Use Catalog Price Rules","Use Catalog Price Rules"
+"User Id","User Id"
+"User Token","User Token"
+"VAT Rates","VAT Rates"
+Yes,Yes
+"You are viewing Beezup sales order grid.","You are viewing Beezup sales order grid."
+"You are viewing a) case of order grid.","You are viewing a) case of order grid."
+"You are viewing default sales order grid.","You are viewing default sales order grid."
+b_availability,b_availability
+b_category_%s,b_category_%s
+b_delivery,b_delivery
+b_description,b_description
+b_price,b_price
+b_product_category_,b_product_category_
+b_product_image,b_product_image
+b_product_url,b_product_url
+b_qty,b_qty
+b_regular_price,b_regular_price
+b_shipping,b_shipping
+b_sku,b_sku
+b_title,b_title
+b_unique_id,b_unique_id
+b_weight,b_weight
+parent_id,parent_id
+parent_or_child,parent_or_child
+url_image,url_image
+variation-theme,variation-theme

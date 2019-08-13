@@ -1,0 +1,50 @@
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4><?php echo $this->__('BeezUP Info'); ?></h4>
+    </div>
+    <div class="fieldset fieldset-wide">
+ 
+<?php 
+$order = $this->getOrder();
+
+
+
+	  $resource = Mage::getSingleton('core/resource');
+		$readConnection = $resource->getConnection('core_read');
+		$table = $resource->getTableName('sales/order_grid');
+		$query = 'SELECT * FROM ' . $table . ' WHERE beezup_order = 1 and  entity_id = \''
+             . $order->getId() . '\' LIMIT 1';	 
+		$results = $readConnection->fetchAll($query);
+ //var_dump($results);
+ if($results[0]['beezup_order'] == 1) {
+ 
+ $date = new DateTime($results[0]['beezup_marketplace_last_modification_date']);
+$beezup_marketplace_last_modification_date = $date->format('d-m-Y H:i:s'). " (UTC Time)";
+ 
+  $date2 = new DateTime($results[0]['beezup_purchase_date']);
+$beezup_purchase_date = $date2->format('d-m-Y H:i:s'). " (UTC Time)";
+
+  $date3 = new DateTime($results[0]['beezup_last_modification_date']);
+$beezup_last_modification_date = $date3->format('d-m-Y H:i:s'). " (UTC Time)";
+ 
+ echo "<strong>".Mage::helper('beezup')->__('BeezUP Order Id:')." </strong> ".$results[0]['beezup_order_id']."<br>";
+ echo "<strong>".Mage::helper('beezup')->__('BeezUP Status:')." </strong> ".$results[0]['beezup_status']."<br>";
+ echo "<strong>".Mage::helper('beezup')->__('BeezUP Last Modification Date:')." </strong> ".$beezup_last_modification_date."<br>";
+ echo "<strong>".Mage::helper('beezup')->__('Marketplace:')." </strong> ".$results[0]['beezup_marketplace']."<br>";
+ echo "<strong>".Mage::helper('beezup')->__('Marketplace Order Id:')." </strong> ".$results[0]['beezup_market_order_id']."<br>";
+ echo "<strong>".Mage::helper('beezup')->__('Marketplace Status:')." </strong> ".$results[0]['beezup_marketplace_status']."<br>";
+ echo "<strong>".Mage::helper('beezup')->__('BeezUP Purchase Date: ')."</strong> ".$beezup_purchase_date ."<br>";
+ echo "<strong>".Mage::helper('beezup')->__('Marketplace Last Modification Date:')." </strong> ".$beezup_marketplace_last_modification_date."<br>";
+ echo "<strong>".Mage::helper('beezup')->__('BeezUP Total Paid: ')."</strong> ".$results[0]['beezup_total_paid']."<br>";
+ if((int)$results[0]['beezup_comission'] > 0) {
+  echo "<strong>".Mage::helper('beezup')->__('BeezUP Total Commission:')." </strong> ".$results[0]['beezup_comission']."<br>";
+ }
+  echo "<strong>".Mage::helper('beezup')->__('BeezUP Order Link:')." </strong> <a href='https://go.beezup.com/OrderManagement/Informations?BeezUPOrderUUId=".$results[0]['beezup_order_id']."&MarketplaceTechnicalCode=".$results[0]['beezup_marketplace']."&AccountId=".$results[0]['beezup_name']."' target='_blank'>https://go.beezup.com/OrderManagement/Informations?BeezUPOrderUUId=".$results[0]['beezup_order_id']."&MarketplaceTechnicalCode=".$results[0]['beezup_marketplace']."&AccountId=".$results[0]['beezup_name']."</a><br>";
+ } else {
+	 
+	 echo Mage::helper('beezup')->__('No data here, since it\'s not an order coming from BeezUP');
+ }
+  
+  ?>
+    </div>
+</div>

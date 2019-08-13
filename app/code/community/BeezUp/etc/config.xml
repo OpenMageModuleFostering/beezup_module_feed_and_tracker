@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <BeezUp>
+            <version>4.0.0</version>
+        </BeezUp>
+    </modules>
+    <global>
+	
+	
+	<resources>
+			    <beezup_setup>
+            <setup>
+                <module>BeezUp</module>
+				  <class>Mage_Eav_Model_Entity_Setup </class>
+            </setup>
+            <connection>
+                <use>core_setup</use>
+            </connection>
+        </beezup_setup> 
+	
+	</resources>
+
+        <blocks>
+		
+		
+			<beezup>
+                <class>BeezUp_Block</class>
+            </beezup>
+		
+			<adminhtml>
+				<rewrite>
+					<sales_order_grid>BeezUp_Block_Adminhtml_Sales_Order_Grid</sales_order_grid>
+					  <sales_order_totals>BeezUp_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
+            <sales_order_invoice_totals>BeezUp_Block_Adminhtml_Sales_Order_Invoice_Totals</sales_order_invoice_totals>
+            <sales_order_creditmemo_totals>BeezUp_Block_Adminhtml_Sales_Order_Creditmemo_Totals</sales_order_creditmemo_totals>
+
+					
+				</rewrite>
+			</adminhtml>
+
+        </blocks>
+        <models>
+		<sales>
+				<rewrite>
+							<order_pdf_invoice>BeezUp_Model_Sales_Order_Pdf_Invoice</order_pdf_invoice>
+									</rewrite>
+		</sales>
+		     <shipping>
+         <rewrite>
+              <carrier_flatrate>BeezUp_Model_Flatrate</carrier_flatrate>
+         </rewrite>
+       </shipping>
+		
+            <beezup>
+                <class>BeezUp_Model</class>
+            </beezup>
+        </models>
+        <helpers>
+            <beezup>
+                <class>BeezUp_Helper</class>
+            </beezup>
+        </helpers>
+    </global>
+	
+
+	
+	
+    <frontend>
+        <routers>
+            <beezup>
+                <use>standard</use>
+                <args>
+                    <module>BeezUp</module>
+                    <frontName>beezup</frontName>
+                </args>
+            </beezup>
+        </routers>
+        <events>
+            <controller_action_layout_generate_blocks_before>
+                <observers>
+                    <beezup_visitors_tracking>
+                        <type>singleton</type>
+                        <class>beezup/observer</class>
+                        <method>addBlockTracking</method>
+                    </beezup_visitors_tracking>
+                </observers>
+            </controller_action_layout_generate_blocks_before>
+            <checkout_onepage_controller_success_action>
+                <observers>
+                    <beezup_sales_tracking>
+                        <type>singleton</type>
+                        <class>beezup/observer</class>
+                        <method>addOrder</method>
+                    </beezup_sales_tracking>
+                </observers>
+            </checkout_onepage_controller_success_action>
+        </events>
+        <translate>
+            <modules>
+                <BeezUp>
+                    <files>
+                        <default>BeezUp.csv</default>
+                    </files>
+                </BeezUp>
+            </modules>
+        </translate>
+    </frontend>
+    <adminhtml>
+	   <layout>
+        <updates>
+            <beezup>
+                <file>beezup_salestab.xml</file>
+            </beezup>
+        </updates>
+    </layout>
+        <acl>
+            <resources>
+
+			
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <beezup>
+                                            <title>BeezUP</title>
+                                        </beezup>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+        <translate>
+            <modules>
+                <BeezUp>
+                    <files>
+                        <default>BeezUp.csv</default>
+                    </files>
+                </BeezUp>
+            </modules>
+        </translate>
+    </adminhtml>
+    <default>
+		
+        <beezup>
+
+            <tracking>
+                <active>0</active>
+                <storeid></storeid>
+                <marge>0</marge>
+                <debug>0</debug>
+				<montant>HT</montant>
+                <position>head</position>
+            </tracking>
+			<marketplace>
+			<connection_status>0</connection_status>
+			</marketplace>
+            <flux>
+                <active>0</active>
+                <debug_flux>1</debug_flux>
+                <ht>1</ht>
+                <vat>19.6</vat>
+                <tablerates_weight_destination>0</tablerates_weight_destination>
+                <days_in>1-2</days_in>
+                <days_out>6-8</days_out>
+                <description>short_description</description>
+                <catalog_rules>0</catalog_rules>
+                <bom>1</bom>
+				<cachedelay>2</cachedelay>
+                <ship></ship>
+                <key></key>
+                <ip></ip>
+				<images></images>
+            </flux>
+        </beezup>
+    </default>
+	
+	
+		<admin>
+        <routers>
+            <adminhtml>
+			<use>admin</use>        
+                <args>
+                    <modules>
+                        <BeezUp before="Mage_Adminhtml">BeezUp</BeezUp>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+	
+	
+	
+</config>

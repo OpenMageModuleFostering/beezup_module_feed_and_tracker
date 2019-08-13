@@ -1,0 +1,133 @@
+Add Byte Order Mark (BOM),"Ajouter le Byte Order Mark (activer de pr&eacute;f&eacute;rence)"
+1 hour,1 heure
+12 hours,12 heures
+2 hours,2 heures
+24 hours,24 heures
+30 minutes,30 minutes
+4 hours,4 heures
+8 hours,8 heures
+Add New Attribute,Ajouter un nouvel attribut
+Allow creating orders with non available products (Beta Version),Permettre l'enregistrement des commandes avec des produits hors stock (Beta Version)
+API BeezUP Connection status:,Statut connexion API BeezUP:
+b_availability,disponibilite
+b_category_%s,categorie_%s
+b_delivery,delai_de_livraison
+b_description,description
+b_price,prix
+b_product_category_,categorie_produit
+b_product_image,url_image
+b_product_url,url_produit
+b_qty,qte
+b_regular_price,prix_barre
+b_shipping,port
+b_sku,sku
+b_title,titre
+b_unique_id,identifiant_unique
+b_weight,poids
+BeezUP,BeezUP
+BeezUP Info,Infos BeezUP
+Beezup Info,Infos BeezUP
+BeezUP Last Modification Date:,Derniere Date de modification BeezUP
+Beezup Order,Commande BeezUP
+BeezUP Order Id:,BeezUP Order ID:
+BeezUP Order Link:,Lien vers commande BeezUP
+Beezup Orders,Commandes BeezUP
+BeezUP Purchase Date: ,Date d'achat:
+BeezUP Server IP address,Adresse IP du serveur BeezUP
+BeezUP Status:,Statut BeezUP:
+BeezUP Total Commission:,Commission Marketplace:
+BeezUP Total Paid: ,"Montant pay&eacute; total:"
+Before body end,En bas de page (body)
+Bom,Bom
+Cache delay,"Validit&eacute; du cache"
+Calculate product margin,Calculer la marge
+Catalog Flow,Flux
+Catalog Price,Prix catalogue
+Change,Modifier
+Cron Call,Lien tache CRON
+Debug Mode,Mode Debug
+Default payment ,Mode de paiement par defaut
+Delivery Time if Product in Stock,"D&eacute;lais de livraison si produit en stock"
+Delivery Time if Product out of Stock,"D&eacute;lais de livraison si produit hors stock"
+Description,Description longue
+Disable,Desactiver
+Enable,Activer
+Enable tracker logs (var/log/beezup.log),Activer les logs du tracker (var/log/beezup.log)
+Enabled,Activer
+Enter eg 1-2 for 1 to 2 days,"Saisissez par exemple 1-2 pour 1 &agrave; 2 jours"
+Enter eg 6-8 for 6 to 8 days,"Saisissez par exemple 6-8 pour 6 &agrave; 8 jours"
+Excl. Tax,HT
+Excl. Tax - with shipping costs,HT - avec frais de port
+Excl. Tax - without shipping costs,HT - sans frais de port
+Export all available pictures,Exporter toutes les images disponibles
+Field Separator,"S&eacute;parateur de champs"
+Filter out of stock products,Filtrer les produits hors stock
+Get your Store ID from My trackers page in your BeezUP account,"R&eacute;cup&eacute;rez votre Store ID depuis la page &apos;Mes trackers&apos; de votre compte BeezUP"
+Head,"En-t&ecirc;te (head)"
+hour,heure
+hours,heures
+In Stock,En stock
+Incl. Tax,TTC
+Incl. Tax - with shipping costs,TTC - avec frais de port
+Incl. Tax - without shipping costs,TTC - sans frais de port
+Key,"Cl&eacute;"
+Last synchronization time :,Derniere date synchronisation:
+Let off if Catalog Price Rules are not used,"D&eacute;sactiver si les r&eacute;gles de prix catalogue ne sont pas utlis&eacute;es"
+Limit the number of products,Limiter le nombre de produits
+Logs,Logs
+Manual orders retrieval link:,"Lien de r&eacute;cup&eacute;ration manuelle des commandes:"
+Marketplace,Marketplace
+Marketplace Last Modification Date:,Date de derniere modification Marketplace :
+Marketplace Order Id,Marketplace Order ID
+Marketplace Order Id:,Marketplace Order ID:
+Marketplace Status:,Statut Marketplace:
+Marketplace:,Marketplace:
+Meta Description,Meta description
+minutes,minutes
+No,Non
+No,Non
+No data here,"Aucune donn&eacute;e ici"
+None,Aucun
+NOT OK,NOT OK
+Not Syncing,No Sync
+OK,OK
+Only for CSV file,Uniquement pour le fichier CSV
+Only this IP address will be able to read the flow (leave empty to disable the restriction),"Seule cette adresse IP sera en mesure de lire le flux (laisser vide pour d&eacute;sactiver la restriction)"
+Orders,Commandes BeezUP
+Out of Stock,Hors stock
+Out of stock products,Produits hors stock
+parent_id,parent_id
+parent_or_child,parent_or_child
+Product description,Description du produit
+Product Price and Shipping Excl. Tax or Incl. Tax in catalog,Prix produits et frais de port saisis en HT ou TTC
+Product Price Excl. Tax or Incl. Tax in catalog,Prix produits saisis en HT ou TTC
+Protects the flow by a unique key (Eg: 85ds6f7): www.yoursite.com/beezup/catalog/xml/key/85ds6f7/,"Prot&eacute;ge le flux par une cl&eacute; unique (Ex : 85ds6f7) : www.votresite.com/beezup/catalog/xml/key/85ds6f7/"
+Sales,Ventes
+Select Value...,"S&eacute;lectionner une valeur..."
+Shipping (Incl. Tax),Frais de port (TTC)
+Short Description,Description courte
+Special Fee,Coûts de gestion
+Specific Attributes,"Attributs sp&eacute;cifiques"
+Store ID,Store ID
+Sync Status:,Statut de synchronisation:
+Syncing,Syncing
+Table Rates,Frais de port poids par destination
+Tag position,Position du tag
+The field cost must be indicated for all products,"Le champ co&ucirc;t doit &ecirc;tre renseign&eacute; pour l&apos;ensemble des produits"
+Total orders amount,Montant total des commandes
+Tracking,Tracking
+url_image,url_image
+Use Catalog Price Rules,"Inclure les r&eacute;gles de prix catalogue"
+Use Table Rates (only Weight vs. Destination),Utiliser le mode tarification poids par destination pour le calcul des frais de port
+User Id,User Id
+User Token,User Token
+variation-theme,variation-theme
+VAT Rates,Taux TVA
+www.yoursite.com/beezup/catalog/xml,www.votreboutique.com/beezup/catalog/xml
+www.yoursite.com/beezup/catalog/xml,www.votreboutique.com/beezup/catalog/xml
+Yes,Oui
+You are viewing a) case of order grid.,You are viewing a) case of order grid.
+You are viewing Beezup sales order grid.,You are viewing Beezup sales order grid.
+You are viewing default sales order grid.,You are viewing default sales order grid.
+Create products if not matched - should always be disabled in production shop, Permet la cr&eacute;ation des produits si aucune correspondance n'est trouv&eacute;e - doit toujours &ecirc;tre inactif sur les sites en production
+For full logs see here:, Pour des logs complets voir ici:

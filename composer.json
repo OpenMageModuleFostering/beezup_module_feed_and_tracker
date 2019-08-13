@@ -1,0 +1,19 @@
+{
+    "name": "OpenMageModuleFostering/BeezUP_Module_feed_and_tracker",
+    "type": "magento-module",
+    "license": "Open-Software-License",
+    "homepage": "",
+    "description": "Main features : 
+- Generate XML catalogue feed
+- Install BeezUP sales tracking system
+- Retrieve orders from Marketplaces",
+    "authors": [
+    {
+        "name": "BeezUP",
+        "email": "charles@beezup.com"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}
