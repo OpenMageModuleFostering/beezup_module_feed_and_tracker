@@ -1,5 +1,7 @@
 {
     "keywords": [
         "openmage-module"
-    ]
+    ],
+    "name": "openmage-module-fostering\/beezup_module_feed_and_tracker",
+    "license": "OSL-3.0"
 }
